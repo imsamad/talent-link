@@ -5,3 +5,5 @@ dist
 .env
 .nx/cache
 .turbo
+
+**.js

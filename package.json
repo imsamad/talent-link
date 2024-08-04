@@ -10,13 +10,17 @@
     "lint": "turbo run lint",
     "test": "turbo run test",
     "typecheck": "turbo run typecheck",
-    "init:db": "cd packages/db && cp .env.example .env && pnpm prisma generate && pnpm prisma db push"
+    "db:generate": "turbo run db:generate",
+    "db:push": "turbo run db:push"
   },
   "devDependencies": {
     "prettier": "^3.2.5",
     "turbo": "^2.0.11"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@prisma/client": "^5.17.0",
+    "prisma": "^5.17.0"
+  },
   "engines": {
     "node": ">=18"
   },

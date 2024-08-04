@@ -5,17 +5,16 @@
   "main": "src/client.js",
   "scripts": {
     "dev": "pnpm tsc --watch",
-    "build": "pnpm tsc"
+    "build": "pnpm tsc",
+    "db:generate": "pnpm prisma generate",
+    "db:push": "pnpm prisma db push"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^20.11.24",
     "typescript": "^5.5.4"
   },
-  "dependencies": {
-    "@prisma/client": "^5.17.0",
-    "prisma": "^5.17.0"
-  },
+  "dependencies": {},
   "keywords": [],
   "author": "",
   "license": "ISC"
