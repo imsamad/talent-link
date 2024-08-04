@@ -1,0 +1,313 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  username      String    @unique
+  email         String    @unique
+  emailVerified DateTime?
+
+  phoneNumber   String?
+  phoneVerified DateTime?
+
+  fullName      String
+  password      String
+  role          ROLE
+  createdAt     DateTime @default(now())
+
+  profile Profile?
+}
+
+model Profile {
+  userId String @unique @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id])
+
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  intro       String?
+  socialLinks   String[]
+  address       Address?
+  resumeLinks   String[]
+  dateOfBirth DateTime?
+  gender Gender
+
+  currentCTC    Int?
+  expectedCTC   SalaryBracket? // null would be interpreted as negotiable
+
+  currentEmploymentStatus EmploymentStatus
+  currentJobStatus String
+
+  joiningStatus JOINING_STATUS
+  workMode WORK_MODE
+  experiences   Experience[]
+  projects      Project[]
+  education     Education[]
+  preferredCity String // enum-ised cities
+  skillIds String[] @db.ObjectId
+  skills   Skill[]  @relation(fields: [skillIds], references: [id])
+  testimonials Testimonial[]
+
+  videoResume String?
+}
+
+enum EmploymentStatus {
+  ACTIVELY_LOOKING
+  EMPLOYED
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+model Education {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  instituteId String    @db.ObjectId
+  institute   Institute @relation(fields: [instituteId], references: [id])
+
+  duration DatePeriod?
+
+  courseId String         @db.ObjectId
+  course   AcademicCourse @relation(fields: [courseId], references: [id])
+
+  backLogPending Boolean @default(false)
+
+  // TODO: validate if cgpa is filled then percentage is not required, vice-versa
+  cgpa       String?
+  percentage String?
+
+  profileId String  @db.ObjectId
+  profile   Profile @relation(fields: [profileId], references: [id])
+}
+
+model Project {
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+
+  skillIds String[] @db.ObjectId
+  skills   Skill[]  @relation(fields: [skillIds], references: [id])
+
+  sourceCodeLink String
+  liveLink       String
+  otherLinks     String[]
+  images         String[]
+  videos         String[]
+  description    String
+  duration       DatePeriod?
+  startDate DateTime?
+  endDate DateTime?
+  
+  profileId String  @db.ObjectId
+  profile   Profile @relation(fields: [profileId], references: [id])
+}
+
+model Experience {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  organisationId String       @db.ObjectId
+  organisation   Organisation @relation(fields: [organisationId], references: [id])
+
+  description String
+  
+  duration DatePeriod?
+  role        String
+
+  skillIds String[] @db.ObjectId
+  skills   Skill[]  @relation(fields: [skillIds], references: [id])
+
+  profileId String  @db.ObjectId
+  profile   Profile @relation(fields: [profileId], references: [id])
+}
+
+enum JOINING_STATUS {
+  IMMEDIATE
+  WITHIN_2_WEEKS
+  FROM_2_TO_4_WEEKS
+  FROM_4_TO_8_WEEKS
+  MORE_THAN_8_WEEKS
+}
+
+model Testimonial {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  testimonial       String
+  socialLinks String[]
+  designation String
+
+  profileeId       String     @db.ObjectId
+  profilees Profile @relation(fields: [profileeId], references: [id])
+}
+
+type Address {
+  city      String?
+  state     String
+  country   String
+  pincode   String?
+  longitude String?
+  latitude  String?
+}
+
+model Recruiter {
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+  socialLinks    String[]
+  organisationId String?       @db.ObjectId
+  organisation   Organisation? @relation(fields: [organisationId], references: [id])
+  address        Address?
+  image          String?
+  video          String?
+}
+
+model Job {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  designationId String      @db.ObjectId
+  designation   Designation @relation(fields: [designationId], references: [id])
+
+  mode    WORK_MODE
+  address Address?
+
+  experienceRequired ExperienceRequirement?
+
+  fresherApplicable      Boolean?
+
+  salary SalaryBracket?
+
+  description String
+
+  skillIds String[] @db.ObjectId
+  skills   Skill[]  @relation(fields: [skillIds], references: [id])
+
+  assignmentLink String?
+  vacancies      Int
+
+  applications Application[]
+
+  isActive Boolean
+  createdAt     DateTime @default(now())
+}
+
+model Questionnaires {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+}
+
+model Application {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  jobId String @db.ObjectId
+  job   Job    @relation(fields: [jobId], references: [id])
+
+  message String
+  status  ApplicationStatus
+  createdAt     DateTime @default(now())
+  acceptedAt DateTime?
+}
+
+enum ApplicationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+model ExperienceRequirement {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  min  Int
+  max  Int
+
+  experienceId String @db.ObjectId @unique
+  experience   Job @relation(fields: [experienceId], references: [id])
+}
+
+model DatePeriod {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  from DateTime
+  to   DateTime
+
+  educationId String @db.ObjectId @unique
+  education   Education @relation(fields: [educationId], references: [id])
+
+  projectId   String @db.ObjectId @unique
+  project     Project @relation(fields: [projectId], references: [id])
+
+  experienceId String @db.ObjectId @unique
+  experience   Experience @relation(fields: [experienceId], references: [id])
+}
+
+model SalaryBracket {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  min  Int
+  max  Int
+  currencyCode String
+  profileId String @db.ObjectId @unique
+  profile   Profile @relation(fields: [profileId], references: [id])
+
+  jobId String @db.ObjectId @unique
+  job   Job    @relation(fields: [jobId], references: [id])
+}
+
+model Designation {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  name String
+
+  jobs Job[]
+}
+
+model Skill {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  name String
+
+  profileIds String[]  @db.ObjectId
+  profile    Profile[] @relation(fields: [profileIds], references: [id])
+
+  jobIds String[] @db.ObjectId
+  job    Job[]    @relation(fields: [jobIds], references: [id])
+
+  projectIds String[] @db.ObjectId
+  project    Project[] @relation(fields: [projectIds], references: [id])
+
+  experienceIds String[] @db.ObjectId
+  experience    Experience[] @relation(fields: [experienceIds], references: [id])
+}
+
+model AcademicCourse {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  title String
+
+  educations Education[]
+}
+
+model Organisation {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  name        String @unique
+  website_url String // TODO: should it be unique
+  description String
+  image       String
+  location    String
+
+  experiences Experience[]
+  recruiters  Recruiter[]
+}
+
+model Institute {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  name    String
+  image   String?
+  address Address?
+
+  educations Education[]
+}
+
+enum ROLE {
+  APPLICANT
+  RECRUITER
+}
+
+enum WORK_MODE {
+  WFH
+  REMOTE
+  HYBRID
+}

@@ -1,0 +1,22 @@
+{
+  "name": "@repo/db",
+  "version": "1.0.0",
+  "description": "database for the app",
+  "main": "src/client.js",
+  "scripts": {
+    "dev": "pnpm tsc --watch",
+    "build": "pnpm tsc"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "^20.11.24",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.17.0",
+    "prisma": "^5.17.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
