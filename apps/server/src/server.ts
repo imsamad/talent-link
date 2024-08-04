@@ -20,6 +20,12 @@ app.get("/", async (_, res) => {
   });
 });
 
+app.get("/one", async (_, res) => {
+  res.json({
+    message: "one honkey dorry!: ",
+  });
+});
+
 app.use(() => {
   throw new CustomError(400, "not found");
 });
