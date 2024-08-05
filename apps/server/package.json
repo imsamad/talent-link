@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@repo/db": "workspace:*",
-    "dotenv": "^16.4.5",
+    "@repo/utils": "workspace:*",
     "express": "^4.19.2",
     "express-async-errors": "^3.1.1",
     "morgan": "^1.10.0"

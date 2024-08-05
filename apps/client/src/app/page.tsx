@@ -1,7 +1,9 @@
 import React from "react";
+// import { prismaClient } from "@repo/db";
 
-const HomePage = () => {
-  return <div>HomePage</div>;
+const page = async () => {
+  // const useres = await prismaClient.user.findMany({});
+  return <div>page</div>;
 };
 
-export default HomePage;
+export default page;

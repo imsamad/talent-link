@@ -1,6 +1,10 @@
 {
   "name": "talent-link",
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "build": "turbo run build",
     "clean": "turbo run clean",
@@ -11,7 +15,9 @@
     "test": "turbo run test",
     "typecheck": "turbo run typecheck",
     "db:generate": "turbo run db:generate",
-    "db:push": "turbo run db:push"
+    "db:push": "turbo run db:push",
+    "studio": "turbo run studio",
+    "clean-x": "rm -rf .turbo && rm -rf apps/client/.turbo && rm -rf apps/server/.turbo && rm -rf packages/utils/.turbo && rm -rf packages/db/.turbo &&  rm -rf node_modules && rm -rf .turbo && rm -rf apps/client/.next && rm -rf apps/client/node_modules && rm -rf apps/server/dist && rm -rf apps/server/node_modules && rm -rf packages/db/dist && rm -rf packages/db/node_modules && rm -rf packages/utils/dist && rm -rf packages/utils/node_modules"
   },
   "devDependencies": {
     "prettier": "^3.2.5",
@@ -19,10 +25,14 @@
   },
   "dependencies": {
     "@prisma/client": "^5.17.0",
+    "dotenv": "^16.4.5",
     "prisma": "^5.17.0"
   },
   "engines": {
     "node": ">=18"
+  },
+  "prisma": {
+    "schema": "packages/db/prisma/schema.prisma"
   },
   "packageManager": "pnpm@9.6.0+sha512.38dc6fba8dba35b39340b9700112c2fe1e12f10b17134715a4aa98ccf7bb035e76fd981cf0bb384dfa98f8d6af5481c2bef2f4266a24bfa20c34eb7147ce0b5e"
 }

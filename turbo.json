@@ -40,6 +40,10 @@
     },
     "db:push": {
       "cache": false
+    },
+    "studio": {
+      "cache": false
     }
-  }
+  },
+  "globalDependencies": [".env"]
 }

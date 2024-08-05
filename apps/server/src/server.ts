@@ -2,7 +2,7 @@ import express from "express";
 import morgan from "morgan";
 import { errorHandlerMdlrwr } from "./middleware/errorHandlerMdlrwr";
 import { CustomError } from "./lib/customError";
-import { prismaClient } from "@repo/db";
+import { authRtr } from "./routes/authRtr";
 
 const app = express();
 
@@ -11,20 +11,13 @@ app.disable("x-powered-by");
 // Middlewares
 app.use(morgan("dev")).use(express.json()).use(express.text());
 
-app.get("/", async (_, res) => {
-  const scsdc = await prismaClient.user.findMany();
-
+app.get("/", (_, res) => {
   res.json({
-    message: "honkey dorry!: ",
-    data: scsdc,
+    message: "running, honkey dorry!",
   });
 });
 
-app.get("/one", async (_, res) => {
-  res.json({
-    message: "one honkey dorry!: ",
-  });
-});
+app.use(authRtr);
 
 app.use(() => {
   throw new CustomError(400, "not found");

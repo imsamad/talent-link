@@ -13,7 +13,7 @@ export const errorHandlerMdlrwr = (
       errors: err.errors,
     });
   }
-  console.error(err);
+  console.error("err: ", err);
   res.status(500).json({
     errror: "server under maintenance!",
   });
