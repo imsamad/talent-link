@@ -43,6 +43,9 @@
     },
     "studio": {
       "cache": false
+    },
+    "clean-x": {
+      "cache": false
     }
   },
   "globalDependencies": [".env"]

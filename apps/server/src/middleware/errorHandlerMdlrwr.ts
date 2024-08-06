@@ -1,19 +1,23 @@
 import { NextFunction, Request, Response } from "express";
-import { TCustomError } from "../lib/customError";
+
+import { TCustomError, TCustomResponseError } from "@repo/utils";
 
 export const errorHandlerMdlrwr = (
   err: any,
-  req: Request,
+  _req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ) => {
-  if (err instanceof TCustomError) {
-    console.error(err.errors);
-    return res.status(err.statusCode).json({
-      errors: err.errors,
-    });
+  if (err instanceof TCustomResponseError) {
+    console.error(err);
+    return res.status(err.statusCode).json(err.errors);
   }
-  console.error("err: ", err);
+
+  if (err instanceof TCustomError) {
+    console.error(err);
+    return res.status(404).json(err.errors);
+  }
+  console.log(err);
   res.status(500).json({
     errror: "server under maintenance!",
   });

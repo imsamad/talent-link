@@ -8,17 +8,13 @@
     "build": "tsc",
     "db:generate": "pnpm prisma generate",
     "db:push": "pnpm prisma db push",
-    "studio": "pnpm prisma studio"
+    "studio": "pnpm prisma studio",
+    "clean-x": "rm -rf node_modules src/*.js .turbo dist"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
-    "@repo/utils": "workspace:*",
-    "@types/bcrypt": "^5.0.2",
     "@types/node": "^20.11.24",
     "typescript": "^5.5.4"
-  },
-  "dependencies": {
-    "bcrypt": "^5.1.1"
   },
   "keywords": [],
   "author": "",

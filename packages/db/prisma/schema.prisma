@@ -8,58 +8,65 @@ datasource db {
 }
 
 model ConfirmationOTP {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
-  otp String
-  userId String @db.ObjectId @unique
-  user User @relation(fields: [userId], references: [id])
-  createdAt     DateTime @default(now())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  otp       String
+  userId    String   @unique @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
 }
 
 model User {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
-  
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
   email         String    @unique
   emailVerified DateTime?
 
-  phoneNumber   String?
+  isBlocked Boolean @default(false)
+  isAdmin Boolean @default(false)
+
+  phoneNumber         String?
   phoneNumberVerified DateTime?
 
-  password      String
-  role          ROLE
-  createdAt     DateTime @default(now())
+  cohortId String?
 
-  profile Profile?
+  password  String
+
+  username String
+
+  createdAt DateTime @default(now())
+
+  resumeProfile ResumeProfile?
 
   confirmationOTP ConfirmationOTP?
 }
 
-model Profile {
+model ResumeProfile {
   userId String @unique @db.ObjectId
   user   User   @relation(fields: [userId], references: [id])
 
-  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
   intro       String?
-  socialLinks   String[]
-  address       Address?
-  resumeLinks   String[]
+  socialLinks String[]
+  address     Address?
+  resumeLinks String[]
   dateOfBirth DateTime?
-  gender Gender
+  gender      Gender
 
-  currentCTC    Int?
-  expectedCTC   SalaryBracket? // null would be interpreted as negotiable
+  currentCTC  Int?
+  expectedCTC SalaryBracket? // null would be interpreted as negotiable
 
   currentEmploymentStatus EmploymentStatus
-  currentJobStatus String
+  currentJobStatus        String
 
   joiningStatus JOINING_STATUS
-  workMode WORK_MODE
+  workMode      WORK_MODE
   experiences   Experience[]
   projects      Project[]
   education     Education[]
   preferredCity String // enum-ised cities
-  skillIds String[] @db.ObjectId
-  skills   Skill[]  @relation(fields: [skillIds], references: [id])
-  testimonials Testimonial[]
+  skillIds      String[]       @db.ObjectId
+  skills        Skill[]        @relation(fields: [skillIds], references: [id])
+  testimonials  Testimonial[]
 
   videoResume String?
 }
@@ -91,12 +98,12 @@ model Education {
   cgpa       String?
   percentage String?
 
-  profileId String  @db.ObjectId
-  profile   Profile @relation(fields: [profileId], references: [id])
+  resumeProfileId String  @db.ObjectId
+  resumeProfile   ResumeProfile @relation(fields: [resumeProfileId], references: [id])
 }
 
 model Project {
-  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  id String @id @default(auto()) @map("_id") @db.ObjectId
 
   skillIds String[] @db.ObjectId
   skills   Skill[]  @relation(fields: [skillIds], references: [id])
@@ -108,11 +115,11 @@ model Project {
   videos         String[]
   description    String
   duration       DatePeriod?
-  startDate DateTime?
-  endDate DateTime?
-  
-  profileId String  @db.ObjectId
-  profile   Profile @relation(fields: [profileId], references: [id])
+  startDate      DateTime?
+  endDate        DateTime?
+
+  resumeProfileId String  @db.ObjectId
+  resumeProfile   ResumeProfile @relation(fields: [resumeProfileId], references: [id])
 }
 
 model Experience {
@@ -122,15 +129,15 @@ model Experience {
   organisation   Organisation @relation(fields: [organisationId], references: [id])
 
   description String
-  
+
   duration DatePeriod?
-  role        String
+  role     String
 
   skillIds String[] @db.ObjectId
   skills   Skill[]  @relation(fields: [skillIds], references: [id])
 
-  profileId String  @db.ObjectId
-  profile   Profile @relation(fields: [profileId], references: [id])
+  resumeProfileId String  @db.ObjectId
+  resumeProfile   ResumeProfile @relation(fields: [resumeProfileId], references: [id])
 }
 
 enum JOINING_STATUS {
@@ -144,12 +151,12 @@ enum JOINING_STATUS {
 model Testimonial {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String
-  testimonial       String
+  testimonial String
   socialLinks String[]
   designation String
 
-  profileeId       String     @db.ObjectId
-  profilees Profile @relation(fields: [profileeId], references: [id])
+  resumeProfileeId String  @db.ObjectId
+  resumeProfilees  ResumeProfile @relation(fields: [resumeProfileeId], references: [id])
 }
 
 type Address {
@@ -182,7 +189,7 @@ model Job {
 
   experienceRequired ExperienceRequirement?
 
-  fresherApplicable      Boolean?
+  fresherApplicable Boolean?
 
   salary SalaryBracket?
 
@@ -196,8 +203,8 @@ model Job {
 
   applications Application[]
 
-  isActive Boolean
-  createdAt     DateTime @default(now())
+  isActive  Boolean
+  createdAt DateTime @default(now())
 }
 
 model Questionnaires {
@@ -210,9 +217,9 @@ model Application {
   jobId String @db.ObjectId
   job   Job    @relation(fields: [jobId], references: [id])
 
-  message String
-  status  ApplicationStatus
-  createdAt     DateTime @default(now())
+  message    String
+  status     ApplicationStatus
+  createdAt  DateTime          @default(now())
   acceptedAt DateTime?
 }
 
@@ -223,38 +230,38 @@ enum ApplicationStatus {
 }
 
 model ExperienceRequirement {
-  id   String @id @default(auto()) @map("_id") @db.ObjectId
-  min  Int
-  max  Int
+  id  String @id @default(auto()) @map("_id") @db.ObjectId
+  min Int
+  max Int
 
-  experienceId String @db.ObjectId @unique
-  experience   Job @relation(fields: [experienceId], references: [id])
+  experienceId String @unique @db.ObjectId
+  experience   Job    @relation(fields: [experienceId], references: [id])
 }
 
 model DatePeriod {
-  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  id   String   @id @default(auto()) @map("_id") @db.ObjectId
   from DateTime
   to   DateTime
 
-  educationId String @db.ObjectId @unique
+  educationId String    @unique @db.ObjectId
   education   Education @relation(fields: [educationId], references: [id])
 
-  projectId   String @db.ObjectId @unique
-  project     Project @relation(fields: [projectId], references: [id])
+  projectId String  @unique @db.ObjectId
+  project   Project @relation(fields: [projectId], references: [id])
 
-  experienceId String @db.ObjectId @unique
+  experienceId String     @unique @db.ObjectId
   experience   Experience @relation(fields: [experienceId], references: [id])
 }
 
 model SalaryBracket {
-  id   String @id @default(auto()) @map("_id") @db.ObjectId
-  min  Int
-  max  Int
+  id           String  @id @default(auto()) @map("_id") @db.ObjectId
+  min          Int
+  max          Int
   currencyCode String
-  profileId String @db.ObjectId @unique
-  profile   Profile @relation(fields: [profileId], references: [id])
+  resumeProfileId    String  @unique @db.ObjectId
+  resumeProfile      ResumeProfile @relation(fields: [resumeProfileId], references: [id])
 
-  jobId String @db.ObjectId @unique
+  jobId String @unique @db.ObjectId
   job   Job    @relation(fields: [jobId], references: [id])
 }
 
@@ -269,16 +276,16 @@ model Skill {
   id   String @id @default(auto()) @map("_id") @db.ObjectId
   name String
 
-  profileIds String[]  @db.ObjectId
-  profile    Profile[] @relation(fields: [profileIds], references: [id])
+  resumeProfileIds String[]  @db.ObjectId
+  resumeProfile    ResumeProfile[] @relation(fields: [resumeProfileIds], references: [id])
 
   jobIds String[] @db.ObjectId
   job    Job[]    @relation(fields: [jobIds], references: [id])
 
-  projectIds String[] @db.ObjectId
+  projectIds String[]  @db.ObjectId
   project    Project[] @relation(fields: [projectIds], references: [id])
 
-  experienceIds String[] @db.ObjectId
+  experienceIds String[]     @db.ObjectId
   experience    Experience[] @relation(fields: [experienceIds], references: [id])
 }
 

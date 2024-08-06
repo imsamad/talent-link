@@ -5,3 +5,4 @@ export const log = (...args: unknown[]): void => {
 
 export * from "./sendEmail";
 export * from "./lib";
+export * from "./customErrors";

@@ -5,7 +5,8 @@
   "main": "./src/index.js",
   "scripts": {
     "build": "tsc",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "clean-x": "rm -rf node_modules src/*.js .turbo dist"
   },
   "devDependencies": {
     "@types/node": "^20.11.24",

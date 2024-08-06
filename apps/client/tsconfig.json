@@ -9,5 +9,16 @@
       }
     ]
   },
-  "include": ["src", "next.config.tss", "next-env.d.ts", ".next/types/**/*.ts"]
+  "paths": {
+    "@/*": ["app/*"]
+  },
+  "include": [
+    "next.config.tss",
+    "next.config.js",
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "app"
+  ]
 }

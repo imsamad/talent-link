@@ -17,14 +17,18 @@
     "db:generate": "turbo run db:generate",
     "db:push": "turbo run db:push",
     "studio": "turbo run studio",
-    "clean-x": "rm -rf .turbo && rm -rf apps/client/.turbo && rm -rf apps/server/.turbo && rm -rf packages/utils/.turbo && rm -rf packages/db/.turbo &&  rm -rf node_modules && rm -rf .turbo && rm -rf apps/client/.next && rm -rf apps/client/node_modules && rm -rf apps/server/dist && rm -rf apps/server/node_modules && rm -rf packages/db/dist && rm -rf packages/db/node_modules && rm -rf packages/utils/dist && rm -rf packages/utils/node_modules"
+    "clean-x": "turbo run clean-x && rm -rf .turbo node_modules",
+    "setup:env": "cp apps/client/.env.example apps/client/.env && cp apps/server/.env.example apps/server/.env &&  && cp packages/db/.env.example packages/db/.env",
+    "setup": "docker compose up -d && pnpm setup:env && pnpm i && pnpm db:generate && pnpm dev"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "prettier": "^3.2.5",
     "turbo": "^2.0.11"
   },
   "dependencies": {
     "@prisma/client": "^5.17.0",
+    "bcryptjs": "^2.4.3",
     "dotenv": "^16.4.5",
     "prisma": "^5.17.0"
   },
