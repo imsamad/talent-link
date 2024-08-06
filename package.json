@@ -18,7 +18,7 @@
     "db:push": "turbo run db:push",
     "studio": "turbo run studio",
     "clean-x": "turbo run clean-x && rm -rf .turbo node_modules",
-    "setup:env": "cp apps/client/.env.example apps/client/.env && cp apps/server/.env.example apps/server/.env &&  && cp packages/db/.env.example packages/db/.env",
+    "setup:env": "cp apps/client/.env.example apps/client/.env && cp apps/server/.env.example apps/server/.env && cp packages/db/.env.example packages/db/.env",
     "setup": "docker compose up -d && pnpm setup:env && pnpm i && pnpm db:generate && pnpm dev"
   },
   "devDependencies": {

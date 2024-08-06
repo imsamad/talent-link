@@ -1,5 +1,5 @@
-import { Navbar } from "./components/Navbar";
 import "./global.css";
+import { Navbar } from "./components/Navbar";
 import SessionWrapper from "./SessionWrapper";
 
 export default function RootLayout({
