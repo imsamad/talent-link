@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 
 import { TCustomError, TCustomResponseError } from "@repo/utils";
 
-export const errorHandlerMdlrwr = (
+export const errorHandlerMdlwr = (
   err: any,
   _req: Request,
   res: Response,
