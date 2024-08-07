@@ -2,14 +2,15 @@
   "name": "@repo/db",
   "version": "1.0.0",
   "description": "database for the app",
-  "main": "./src/client.js",
+  "main": "./dist/client.js",
+  "types": "./dist/client.d.ts",
   "scripts": {
     "dev": "tsc -w",
     "build": "tsc",
     "db:generate": "pnpm prisma generate",
     "db:push": "pnpm prisma db push",
     "studio": "pnpm prisma studio",
-    "clean-x": "rm -rf node_modules src/*.js .turbo dist"
+    "clean-x": "rm -rf node_modules .turbo dist"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",

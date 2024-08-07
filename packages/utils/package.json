@@ -2,11 +2,12 @@
   "name": "@repo/utils",
   "version": "0.0.0",
   "private": true,
-  "main": "./src/index.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "clean-x": "rm -rf node_modules src/*.js .turbo dist"
+    "clean-x": "rm -rf node_modules dist .turbo"
   },
   "devDependencies": {
     "@types/node": "^20.11.24",
