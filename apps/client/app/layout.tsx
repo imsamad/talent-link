@@ -1,4 +1,7 @@
 import "./global.css";
+import "@radix-ui/themes/styles.css";
+import { Theme } from "@radix-ui/themes";
+
 import { Navbar } from "./components/Navbar";
 import SessionWrapper from "./SessionWrapper";
 
@@ -11,8 +14,10 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <SessionWrapper>
-          <Navbar />
-          {children}
+          <Theme>
+            <Navbar />
+            {children}
+          </Theme>
         </SessionWrapper>
       </body>
     </html>

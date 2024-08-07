@@ -3,6 +3,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 import React from "react";
+import Resume from "../components/Resume";
 
 const ProfilePage = () => {
   const router = useRouter();
@@ -14,7 +15,7 @@ const ProfilePage = () => {
     },
   });
 
-  return <div>ProfilePage</div>;
+  return <Resume />;
 };
 
 export default ProfilePage;

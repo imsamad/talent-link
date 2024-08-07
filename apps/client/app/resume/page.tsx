@@ -1,8 +1,9 @@
 "use client";
 import React from "react";
+import Resume from "../components/Resume";
 
 const page = () => {
-  return <div>page</div>;
+  return <Resume />;
 };
 
 export default page;

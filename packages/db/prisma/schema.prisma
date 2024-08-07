@@ -47,19 +47,18 @@ model ResumeProfile {
   id          String    @id @default(auto()) @map("_id") @db.ObjectId
   intro       String?
   socialLinks String[]
-  address     Address?
   resumeLinks String[]
-  dateOfBirth DateTime?
   gender      Gender
-
+  dateOfBirth DateTime?
   currentCTC  Int?
   expectedCTC SalaryBracket? // null would be interpreted as negotiable
-
   currentEmploymentStatus EmploymentStatus
   currentJobStatus        String
-
   joiningStatus JOINING_STATUS
   workMode      WORK_MODE
+
+  address     Address?
+
   experiences   Experience[]
   projects      Project[]
   education     Education[]

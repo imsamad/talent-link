@@ -11,11 +11,11 @@ const AuthForm = ({ formType }: { formType: "login" | "signup" }) => {
   const { status } = useSession();
   const searchParams = useSearchParams();
   const router = useRouter();
-  const redirectTo = searchParams.get("redirectTo");
+  const redirectTo = searchParams.get("redirectTo") || "/";
 
-  // useEffect(() => {
-  //   if (status == "authenticated") router.push(redirectTo ? redirectTo : "/");
-  // }, [status]);
+  useEffect(() => {
+    if (status == "authenticated") router.push(redirectTo);
+  }, [status]);
 
   const [step, setStep] = useState<TFormType>(formType);
 
@@ -54,24 +54,24 @@ const AuthForm = ({ formType }: { formType: "login" | "signup" }) => {
   }, [timer]);
 
   const handleLogIn = async (email: string, password: string) => {
-    await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    })
-      .then((res: any) => {
-        if (!res.ok) {
-          throw "csdc";
-        }
-        fetcher("/auth/login", "post", { email, password })
-          .then(() => {
+    fetcher("/auth/login", "post", { email, password })
+      .then(async () => {
+        await signIn("credentials", {
+          email,
+          password,
+          redirect: false,
+          callbackUrl: redirectTo,
+        })
+          .then(async (res: any) => {
+            if (!res.ok) {
+              await fetcher("/auth/logout");
+              throw "hacsd";
+            }
             router.push(redirectTo ? redirectTo : "/");
           })
-          .catch(() => {
-            signOut();
-          });
+          .catch(() => {});
       })
-      .catch((err) => {
+      .catch(() => {
         setError("Provide valid credentials!");
       });
   };

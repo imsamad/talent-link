@@ -36,7 +36,9 @@ export const login = async (req: Request, res: Response) => {
       message: "provide email and password",
     });
 
-  const user = await prismaClient.user.findFirst({ where: { email } });
+  const user = await prismaClient.user.findFirst({
+    where: { email, emailVerified: { not: null } },
+  });
 
   if (!user)
     return new CustomResponseError(404, {
@@ -82,7 +84,7 @@ export const signUp = async (req: Request, res: Response) => {
     });
 
   if (
-    await prisma.user.findFirst({
+    await prisma.user.findUnique({
       where: {
         email,
       },
