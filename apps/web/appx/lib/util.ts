@@ -8,8 +8,8 @@ export const fetcher = async (
     body: body ? JSON.stringify(body) : undefined,
     headers: body
       ? {
-          "Content-Type": "application/json",
-        }
+        "Content-Type": "application/json",
+      }
       : undefined,
     credentials: "include",
   });
