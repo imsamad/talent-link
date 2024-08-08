@@ -6,5 +6,4 @@ dist
 .nx/cache
 .turbo
 
-**.js
 .vercel
