@@ -3,10 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "buildx": "next build",
+    "build": "next build",
     "clean": "rm -rf .next",
     "dev": "next dev",
-    "lint2": "next lint",
+    "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "start": "next start",
     "clean-x": "rm -rf node_modules .next .turbo"

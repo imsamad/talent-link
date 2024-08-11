@@ -1,7 +1,7 @@
 import { ZodSchema } from "zod";
 import { Request, Response, NextFunction } from "express";
 import { CustomResponseError } from "@repo/utils";
-import { fromError } from "zod-validation-error";
+
 
 export const validateMdlwr = (
   schema: ZodSchema,
