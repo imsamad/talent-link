@@ -11,7 +11,7 @@ export function generateOTP(numDigits: number = 4): string {
 
   // Generate random bytes and convert to a number
   const randomBytes = crypto.randomBytes(
-    Math.ceil((numDigits * Math.log2(10)) / 8)
+    Math.ceil((numDigits * Math.log2(10)) / 8),
   );
   const otp =
     parseInt(randomBytes.toString("hex").slice(0, numDigits), 16) % max;

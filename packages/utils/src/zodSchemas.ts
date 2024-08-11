@@ -4,7 +4,7 @@ import {
   Gender_Enum,
   JOINING_STATUS_Enum,
   WORK_MODE_Enum,
-} from "@prisma/client";
+} from "@repo/db";
 import { z } from "zod";
 
 // Enum definitions
@@ -108,12 +108,12 @@ export const EducationSchema = z.object(
         }),
       {
         invalid_type_error: "Provide array of education object",
-      }
+      },
     ),
   },
   {
     invalid_type_error: "Provide array of education object",
-  }
+  },
 );
 
 export const ExperienceSchema = z.object(
@@ -131,12 +131,12 @@ export const ExperienceSchema = z.object(
         .strict(),
       {
         invalid_type_error: "Provide array of experience object",
-      }
+      },
     ),
   },
   {
     invalid_type_error: "Provide array of experience object",
-  }
+  },
 );
 
 export const ProjectSchema = z.object(
@@ -158,12 +158,12 @@ export const ProjectSchema = z.object(
         .strict(),
       {
         invalid_type_error: "Provide array of projects object",
-      }
+      },
     ),
   },
   {
     invalid_type_error: "Provide array of projects object",
-  }
+  },
 );
 
 export const TestimonialSchema = z.object(
@@ -181,12 +181,12 @@ export const TestimonialSchema = z.object(
         .strict(),
       {
         invalid_type_error: "Provide array of projects object",
-      }
+      },
     ),
   },
   {
     invalid_type_error: "Provide array of testimonials object",
-  }
+  },
 );
 
 const TExperienceRequirementSchema = z.object({

@@ -28,28 +28,28 @@ profileRtr.post(
   "/educations",
   authMdlwr,
   validateMdlwr(EducationSchema, "body"),
-  upsertProfileEducations
+  upsertProfileEducations,
 );
 
 profileRtr.post(
   "/experiences",
   authMdlwr,
   validateMdlwr(ExperienceSchema, "body"),
-  upsertProfileExperiences
+  upsertProfileExperiences,
 );
 
 profileRtr.post(
   "/projects",
   authMdlwr,
   validateMdlwr(ProjectSchema, "body"),
-  upsertProfileProjects
+  upsertProfileProjects,
 );
 
 profileRtr.post(
   "/testimonials",
   authMdlwr,
   validateMdlwr(TestimonialSchema, "body"),
-  upsertProfileTestimonials
+  upsertProfileTestimonials,
 );
 
 export { profileRtr };

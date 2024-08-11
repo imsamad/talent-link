@@ -24,7 +24,7 @@ applicationRtr
     validateMdlwr(ObjectIDOnParam("jobId"), "params"),
     validateMdlwr(ObjectIDOnParam("invitee"), "params"),
     authMdlwr,
-    inviteForApplication
+    inviteForApplication,
   );
 
 applicationRtr
@@ -33,7 +33,7 @@ applicationRtr
     validateMdlwr(ObjectIDOnParam("applicationId"), "params"),
     validateMdlwr(ObjectIDOnParam("jobId"), "params"),
     authMdlwr,
-    approvedApplicationsForInterview
+    approvedApplicationsForInterview,
   );
 
 applicationRtr
@@ -42,7 +42,7 @@ applicationRtr
     validateMdlwr(ObjectIDOnParam("applicationId"), "params"),
     validateMdlwr(ObjectIDOnParam("jobId"), "params"),
     authMdlwr,
-    acceptApplicationsFinally
+    acceptApplicationsFinally,
   );
 
 applicationRtr
@@ -50,7 +50,7 @@ applicationRtr
   .get(
     validateMdlwr(ObjectIDOnParam("jobId"), "params"),
     authMdlwr,
-    getApplications
+    getApplications,
   );
 
 export { applicationRtr };

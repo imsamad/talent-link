@@ -1,5 +1,11 @@
 import { PrismaClient } from "@prisma/client";
 
+import {
+  PrismaClientKnownRequestError,
+  PrismaClientUnknownRequestError,
+  PrismaClientValidationError,
+} from "@prisma/client/runtime/library";
+
 declare global {
   var prisma: PrismaClient;
 }
@@ -16,4 +22,9 @@ if (process.env.NODE_ENV != "production") {
 
 export { prisma as prismaClient };
 
+export {
+  PrismaClientKnownRequestError,
+  PrismaClientUnknownRequestError,
+  PrismaClientValidationError,
+};
 export * from "@prisma/client";

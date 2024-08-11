@@ -83,7 +83,7 @@ export const upsertProfileEducations = async (req: Request, res: Response) => {
       }
       return acc;
     },
-    { newExperiences: [], prevExperiences: [] }
+    { newExperiences: [], prevExperiences: [] },
   );
 
   if (newExperiences.length > 0) {
@@ -101,8 +101,8 @@ export const upsertProfileEducations = async (req: Request, res: Response) => {
         prismaClient.education.update({
           where: { id },
           data: rest,
-        })
-      )
+        }),
+      ),
     );
   }
 
@@ -128,7 +128,7 @@ export const upsertProfileExperiences = async (req: Request, res: Response) => {
       }
       return acc;
     },
-    { newExperiences: [], prevExperiences: [] }
+    { newExperiences: [], prevExperiences: [] },
   );
 
   if (newExperiences.length > 0) {
@@ -146,8 +146,8 @@ export const upsertProfileExperiences = async (req: Request, res: Response) => {
         prismaClient.experience.update({
           where: { id },
           data: rest,
-        })
-      )
+        }),
+      ),
     );
   }
 
@@ -173,7 +173,7 @@ export const upsertProfileProjects = async (req: Request, res: Response) => {
       }
       return acc;
     },
-    { newProjects: [], prevProjects: [] }
+    { newProjects: [], prevProjects: [] },
   );
 
   if (newProjects.length > 0) {
@@ -191,8 +191,8 @@ export const upsertProfileProjects = async (req: Request, res: Response) => {
         prismaClient.project.update({
           where: { id },
           data: rest,
-        })
-      )
+        }),
+      ),
     );
   }
 
@@ -208,7 +208,7 @@ export const upsertProfileProjects = async (req: Request, res: Response) => {
 
 export const upsertProfileTestimonials = async (
   req: Request,
-  res: Response
+  res: Response,
 ) => {
   const userId = req.user?.id! as string;
 
@@ -221,7 +221,7 @@ export const upsertProfileTestimonials = async (
       }
       return acc;
     },
-    { newTestimonials: [], prevTestimonials: [] }
+    { newTestimonials: [], prevTestimonials: [] },
   );
 
   if (newTestimonials.length > 0) {
@@ -239,8 +239,8 @@ export const upsertProfileTestimonials = async (
         prismaClient.testimonial.update({
           where: { id },
           data: rest,
-        })
-      )
+        }),
+      ),
     );
   }
 

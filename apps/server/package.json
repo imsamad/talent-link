@@ -6,7 +6,10 @@
     "dev": "ts-node-dev --rs --transpile-only src/index",
     "build": "tsc",
     "start": "node dist/index",
-    "clean-x": "rm -rf node_modules src/.next .turbo dist"
+    "clean": "rm -rf dist",
+    "clean-x": "rm -rf node_modules .turbo dist",
+    "lint": "eslint src/",
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [],
   "author": "",
@@ -19,7 +22,8 @@
     "@types/jsonwebtoken": "^9.0.6",
     "@types/morgan": "^1.9.9",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.5.4"
+    "typescript": "^5.5.4",
+    "@repo/eslint-config": "workspace:*"
   },
   "dependencies": {
     "@repo/db": "workspace:*",

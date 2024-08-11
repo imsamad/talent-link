@@ -6,13 +6,13 @@ import {
   PrismaClientKnownRequestError,
   PrismaClientUnknownRequestError,
   PrismaClientValidationError,
-} from "@prisma/client/runtime/library";
+} from "@repo/db";
 
 export const errorHandlerMdlwr = (
   err: any,
   _req: Request,
   res: Response,
-  _next: NextFunction
+  _next: NextFunction,
 ) => {
   console.log("error from errorHandlerMdlwr =======================: ");
   console.log(err);

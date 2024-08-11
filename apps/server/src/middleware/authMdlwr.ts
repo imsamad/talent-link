@@ -7,7 +7,7 @@ import { prismaClient } from "@repo/db";
 export const authMdlwr = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   let authToken = req.cookies[AUTH_COOKIE_NAME];
 
@@ -39,7 +39,7 @@ export const authMdlwr = async (
 export const parseCookie = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   let authToken = req.cookies[AUTH_COOKIE_NAME];
 

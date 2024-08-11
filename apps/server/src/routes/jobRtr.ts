@@ -30,12 +30,12 @@ jobRtr
     authMdlwr,
     validateMdlwr(ObjectIDOnParam("jobId"), "params"),
     validateMdlwr(JobSchema, "body"),
-    updateJob
+    updateJob,
   )
   .delete(
     authMdlwr,
     validateMdlwr(ObjectIDOnParam("jobId"), "params"),
-    deleteJob
+    deleteJob,
   );
 
 export { jobRtr };

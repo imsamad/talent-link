@@ -144,7 +144,7 @@ export const confirmOTP = async (req: Request, res: Response) => {
 
   const tenMinutesAgo = new Date(
     new Date().getTime() -
-      parseInt(process.env.OTP_EXPIRE_IN_MIN!, 10) * 60 * 1000
+      parseInt(process.env.OTP_EXPIRE_IN_MIN!, 10) * 60 * 1000,
   );
 
   if (tenMinutesAgo >= new Date(token?.createdAt)) {
@@ -186,7 +186,7 @@ export const resendOTP = async (req: Request, res: Response) => {
   else {
     const tenMinutesAgo = new Date(
       new Date().getTime() -
-        parseInt(process.env.OTP_RETRY_IN_MIN!, 10) * 60 * 1000
+        parseInt(process.env.OTP_RETRY_IN_MIN!, 10) * 60 * 1000,
     );
 
     if (tenMinutesAgo < new Date(vToken.createdAt)) {

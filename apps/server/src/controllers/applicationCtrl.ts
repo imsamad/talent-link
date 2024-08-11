@@ -86,7 +86,7 @@ export const getApplications = async (req: Request, res: Response) => {
 
 export const approvedApplicationsForInterview = async (
   req: Request,
-  res: Response
+  res: Response,
 ) => {
   const userId = req.user?.id! as string;
   const jobId = req.params.jobId;
@@ -119,7 +119,7 @@ export const approvedApplicationsForInterview = async (
 
 export const acceptApplicationsFinally = async (
   req: Request,
-  res: Response
+  res: Response,
 ) => {
   const userId = req.user?.id! as string;
   const jobId = req.params.jobId;

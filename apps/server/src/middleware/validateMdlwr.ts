@@ -5,7 +5,7 @@ import { fromError } from "zod-validation-error";
 
 export const validateMdlwr = (
   schema: ZodSchema,
-  at: "body" | "query" | "params"
+  at: "body" | "query" | "params",
 ) => {
   return (req: Request, _: Response, next: NextFunction) => {
     let result = schema.safeParse(req[at]);

@@ -11,6 +11,7 @@
     "db:seed": "pnpm prisma db seed",
     "db:push": "pnpm prisma db push",
     "studio": "pnpm prisma studio",
+    "clean": "rm -rf dist",
     "clean-x": "rm -rf node_modules .turbo dist"
   },
   "prisma": {
@@ -24,5 +25,9 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "5.18.0",
+    "prisma": "^5.17.0"
+  }
 }

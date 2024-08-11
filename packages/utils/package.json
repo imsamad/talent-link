@@ -4,12 +4,20 @@
   "private": true,
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
-    "build": "tsc",
     "dev": "tsc --watch",
-    "clean-x": "rm -rf node_modules dist .turbo"
+    "build": "tsc",
+    "lint": "eslint src/",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "clean-x": "rm -rf node_modules .turbo dist"
   },
   "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/db": "workspace:*",
     "@types/node": "^20.11.24",
     "@types/nodemailer": "^6.4.15",
     "typescript": "^5.3.3"
