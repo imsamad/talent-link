@@ -1,5 +1,5 @@
 {
-  "name": "talent-link",
+  "name": "job-board",
   "private": true,
   "workspaces": [
     "apps/*",
@@ -16,6 +16,7 @@
     "typecheck": "turbo run typecheck",
     "db:generate": "turbo run db:generate",
     "db:push": "turbo run db:push",
+    "db:seed": "turbo run db:seed",
     "studio": "turbo run studio",
     "clean-x": "turbo run clean-x && rm -rf .turbo node_modules",
     "setup:env": "cp apps/client/.env.example apps/client/.env && cp apps/server/.env.example apps/server/.env && cp packages/db/.env.example packages/db/.env",

@@ -8,16 +8,19 @@ import {
   signUp,
 } from "../controllers/authCtrl";
 import { authMdlwr } from "../middleware/authMdlwr";
+import { validateMdlwr } from "../middleware/validateMdlwr";
+import { LoginSchema } from "@repo/utils";
 
 const authRtr = Router();
 
-authRtr.post("/auth/signup", signUp);
-authRtr.post("/auth/login", login);
-authRtr.post("/auth/logout", logout);
-authRtr.post("/auth/confirmOTP/:otp", confirmOTP);
-authRtr.get("/auth/resendOTP/:userId", resendOTP);
-authRtr.post("/auth/forgetPassword", () => {});
-authRtr.post("/auth/forgetIdentifier", () => {});
-authRtr.get("/auth/me", authMdlwr, getMe);
+authRtr.post("/signup", validateMdlwr(LoginSchema, "body"), signUp);
+authRtr.post("/login", validateMdlwr(LoginSchema, "body"), login);
+authRtr.post("/logout", logout);
+authRtr.post("/confirmOTP/:token", confirmOTP);
+authRtr.get("/resendOTP/:userId", resendOTP);
+
+authRtr.post("/forgetPassword", () => {});
+authRtr.post("/forgetIdentifier", () => {});
+authRtr.get("/me", authMdlwr, getMe);
 
 export { authRtr };

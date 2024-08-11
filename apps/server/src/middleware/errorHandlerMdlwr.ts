@@ -2,22 +2,74 @@ import { NextFunction, Request, Response } from "express";
 
 import { TCustomError, TCustomResponseError } from "@repo/utils";
 
+import {
+  PrismaClientKnownRequestError,
+  PrismaClientUnknownRequestError,
+  PrismaClientValidationError,
+} from "@prisma/client/runtime/library";
+
 export const errorHandlerMdlwr = (
   err: any,
   _req: Request,
   res: Response,
   _next: NextFunction
 ) => {
+  console.log("error from errorHandlerMdlwr =======================: ");
+  console.log(err);
+
   if (err instanceof TCustomResponseError) {
-    console.error(err);
     return res.status(err.statusCode).json(err.errors);
   }
 
+  if (err instanceof PrismaClientKnownRequestError) {
+    const _err: any = err;
+    console.log(err.code);
+    switch (_err.code) {
+      case "P2002":
+        // handling duplicate key errors
+        return res.status(400).json({
+          message: `Duplicate field value: ${_err.meta.target}`,
+        });
+
+      case "P2014":
+        // handling invalid id errors
+        return res.status(400).json({
+          message: `Invalid ID: ${_err.meta.target}`,
+        });
+      case "P2003":
+        // handling invalid data errors
+        return res.status(400).json({
+          message: `Invalid input data: ${_err.meta.target}`,
+        });
+      case "P2025":
+        return res.status(400).json({
+          message: `Record not found`,
+        });
+      case "P2023":
+        return res.status(400).json({
+          message: `provide valid data`,
+        });
+      default:
+        // handling all other errors
+        return res.status(500).json({
+          message: `Something went wrong: ${_err.message}`,
+        });
+    }
+  }
+
+  if (err instanceof PrismaClientUnknownRequestError) {
+    return res.status(404).json(err.message);
+  }
+  if (err instanceof PrismaClientValidationError) {
+    return res.status(404).json({
+      message: "provide data in valid format",
+    });
+  }
+
   if (err instanceof TCustomError) {
-    console.error(err);
     return res.status(404).json(err.errors);
   }
-  console.log(err);
+
   res.status(500).json({
     errror: "server under maintenance!",
   });

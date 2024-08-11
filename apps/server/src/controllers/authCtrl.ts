@@ -1,8 +1,7 @@
 import { prismaClient, User } from "@repo/db";
-import { Request, Response } from "express";
 import * as bcrypt from "bcryptjs";
+import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-
 import {
   CustomError,
   CustomResponseError,
@@ -15,13 +14,13 @@ import { AUTH_COOKIE_NAME } from "../lib/const";
 
 export const logout = async (_: Request, res: Response) => {
   res.cookie(AUTH_COOKIE_NAME, "", { maxAge: 0 });
-  res.send("logout");
+  res.json("logout!");
 };
 
 export const getMe = async (req: Request, res: Response) => {
   res.json({
     user: {
-      id: req.user?.id!,
+      id: req.user?.id! as string,
       username: req.user?.username!,
       email: req.user?.email!,
     },
@@ -31,19 +30,15 @@ export const getMe = async (req: Request, res: Response) => {
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
-  if (!email || !password)
-    return new CustomResponseError(404, {
-      message: "provide email and password",
-    });
-
-  const user = await prismaClient.user.findFirst({
+  const user = await prismaClient.user.findUnique({
     where: { email, emailVerified: { not: null } },
   });
 
-  if (!user)
-    return new CustomResponseError(404, {
+  if (!user) {
+    throw new CustomResponseError(404, {
       message: "user not found",
     });
+  }
 
   if (!(await bcrypt.compare(password, user.password)))
     return new CustomResponseError(404, {
@@ -71,6 +66,7 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const signUp = async (req: Request, res: Response) => {
+  let _otp = "";
   const body: {
     email: string;
     password: string;
@@ -78,13 +74,8 @@ export const signUp = async (req: Request, res: Response) => {
 
   let { email, password } = body;
 
-  if (!email || !password)
-    return new CustomResponseError(404, {
-      message: "provide email and password",
-    });
-
   if (
-    await prisma.user.findUnique({
+    await prismaClient.user.findUnique({
       where: {
         email,
       },
@@ -95,7 +86,7 @@ export const signUp = async (req: Request, res: Response) => {
 
   const salt = await bcrypt.genSalt(parseInt(process.env.SALT_SIZE!) || 10);
 
-  const user: User = await prisma.$transaction(async (txn) => {
+  const user: User = await prismaClient.$transaction(async (txn) => {
     try {
       const userCreated = await txn.user.create({
         data: {
@@ -107,12 +98,12 @@ export const signUp = async (req: Request, res: Response) => {
         },
       });
 
-      const otp = generateOTP();
-
-      await txn.confirmationOTP.create({
+      const token = generateOTP();
+      _otp = token;
+      await txn.verificationToken.create({
         data: {
-          userId: userCreated.id,
-          otp,
+          identifier: userCreated.id,
+          token,
         },
       });
 
@@ -120,7 +111,7 @@ export const signUp = async (req: Request, res: Response) => {
         await sendEmail({
           to: email,
           subject: "Email confirmation OTP!",
-          html: `<h3>OTP:${otp}</h3>`,
+          html: `<h3>OTP:${token}</h3>`,
         });
 
       return userCreated;
@@ -135,13 +126,14 @@ export const signUp = async (req: Request, res: Response) => {
   res.json({
     userId: user.id,
     message: "Registred successfully, plz verify email!",
+    otp: process.env.NODE_ENV == "production" ? undefined : _otp,
   });
 };
 
 export const confirmOTP = async (req: Request, res: Response) => {
-  const token = await prismaClient.confirmationOTP.findFirst({
+  const token = await prismaClient.verificationToken.findFirst({
     where: {
-      otp: req.params.otp,
+      token: req.params.token,
     },
   });
 
@@ -161,12 +153,17 @@ export const confirmOTP = async (req: Request, res: Response) => {
     });
   }
 
-  await prismaClient.confirmationOTP.delete({ where: { id: token.id } });
-
-  await prismaClient.user.update({
-    where: { id: token.userId },
+  await prismaClient.verificationToken.delete({ where: { id: token.id } });
+  const user = await prismaClient.user.update({
+    where: { id: token.identifier },
     data: {
       emailVerified: new Date(),
+    },
+  });
+
+  await prismaClient.profile.create({
+    data: {
+      id: user.id,
     },
   });
 
@@ -176,13 +173,13 @@ export const confirmOTP = async (req: Request, res: Response) => {
 };
 
 export const resendOTP = async (req: Request, res: Response) => {
-  const token = await prismaClient.confirmationOTP.findFirst({
+  const vToken = await prismaClient.verificationToken.findFirst({
     where: {
-      userId: req.params.userId,
+      identifier: req.params.userId,
     },
   });
 
-  if (!token)
+  if (!vToken)
     throw new CustomResponseError(404, {
       message: "What is this!",
     });
@@ -192,7 +189,7 @@ export const resendOTP = async (req: Request, res: Response) => {
         parseInt(process.env.OTP_RETRY_IN_MIN!, 10) * 60 * 1000
     );
 
-    if (tenMinutesAgo < new Date(token.createdAt)) {
+    if (tenMinutesAgo < new Date(vToken.createdAt)) {
       throw new CustomResponseError(403, {
         message: "Had sent!",
       });
@@ -208,25 +205,25 @@ export const resendOTP = async (req: Request, res: Response) => {
       message: "What is this!",
     });
 
-  const otp = generateOTP();
+  const token = generateOTP();
 
-  await prismaClient.confirmationOTP.upsert({
-    where: { userId: user.id },
+  await prismaClient.verificationToken.upsert({
+    where: { identifier: user.id },
     update: {
-      otp,
+      token,
       createdAt: new Date(),
     },
     create: {
-      otp,
+      token,
       createdAt: new Date(),
-      userId: user.id,
+      identifier: user.id,
     },
   });
   if (process.env.EMAIL_USER && process.env.EMAIL_PASS)
     await sendEmail({
       to: user.email,
       subject: "Email confirmation OTP!",
-      html: `<h3>OTP:${otp}</h3>`,
+      html: `<h3>OTP:${token}</h3>`,
     });
 
   res.json({

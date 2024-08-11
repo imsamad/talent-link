@@ -41,6 +41,9 @@
     "db:push": {
       "cache": false
     },
+    "db:seed": {
+      "cache": false
+    },
     "studio": {
       "cache": false
     },

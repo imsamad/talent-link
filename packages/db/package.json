@@ -8,13 +8,18 @@
     "dev": "tsc -w",
     "build": "tsc",
     "db:generate": "pnpm prisma generate",
+    "db:seed": "pnpm prisma db seed",
     "db:push": "pnpm prisma db push",
     "studio": "pnpm prisma studio",
     "clean-x": "rm -rf node_modules .turbo dist"
   },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
-    "@types/node": "^20.11.24",
+    "@types/node": "^20.14.14",
+    "ts-node": "^10.9.2",
     "typescript": "^5.5.4"
   },
   "keywords": [],

@@ -7,75 +7,83 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model ConfirmationOTP {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  otp       String
-  userId    String   @unique @db.ObjectId
-  user      User     @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
+model VerificationToken {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  token String
+
+  // this key identifier instead of userId is taken for the conformity reasons with PrismaAdapters.
+  identifier String   @unique @db.ObjectId
+  user       User     @relation(fields: [identifier], references: [id])
+  createdAt  DateTime @default(now())
 }
 
 model User {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  email         String    @unique
-  emailVerified DateTime?
+  email       String  @unique
+  phoneNumber Int?
+  password    String
+  username    String
+  name        String?
+  image       String?
+  cohortId    String?
 
-  isBlocked Boolean @default(false)
-  isAdmin Boolean @default(false)
-
-  phoneNumber         String?
+  emailVerified       DateTime?
   phoneNumberVerified DateTime?
 
-  cohortId String?
+  isBlocked Boolean @default(false)
+  isAdmin   Boolean @default(false)
 
-  password  String
-
-  username String
+  profile         Profile?
+  confirmationOTP VerificationToken?
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  resumeProfile ResumeProfile?
+  jobs Job[]
 
-  confirmationOTP ConfirmationOTP?
 }
 
-model ResumeProfile {
-  userId String @unique @db.ObjectId
-  user   User   @relation(fields: [userId], references: [id])
+model Profile {
+  // userId String @unique @db.ObjectId
 
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  intro       String?
-  socialLinks String[]
-  resumeLinks String[]
-  gender      Gender
-  dateOfBirth DateTime?
-  currentCTC  Int?
-  expectedCTC SalaryBracket? // null would be interpreted as negotiable
-  currentEmploymentStatus EmploymentStatus
-  currentJobStatus        String
-  joiningStatus JOINING_STATUS
-  workMode      WORK_MODE
+  // as the user authorised, profile entrt would be created immediately with id = user.id 
+  // no extra userId field would be used, as User and Profile would have 1:1 mapping
+  user   User   @relation(fields: [id], references: [id])
 
-  address     Address?
+  id                      String                 @id @default(auto()) @map("_id") @db.ObjectId
+  intro                   String?
+  socialLinks             String[]
+  videoResume             String?
+  resumeLinks             String[]
+  gender                  Gender_Enum?
+  dateOfBirth             DateTime?
+  currentCTC              Int?
+  expectedCTC             TSalaryBracket? // null would be interpreted as negotiable
+  currentEmploymentStatus EmploymentStatus_Enum?
+  joiningStatus           JOINING_STATUS_Enum?
+  workMode                WORK_MODE_Enum?
+
+  address Address?
 
   experiences   Experience[]
   projects      Project[]
-  education     Education[]
-  preferredCity String // enum-ised cities
-  skillIds      String[]       @db.ObjectId
-  skills        Skill[]        @relation(fields: [skillIds], references: [id])
+  educations    Education[]
+  preferredCity String? // enum-ised cities
+  skillIds      String[]      @db.ObjectId
+  skills        Skill[]       @relation(fields: [skillIds], references: [id])
   testimonials  Testimonial[]
-
-  videoResume String?
+  invitaion Invitation[]
+  applications Application[]
 }
 
-enum EmploymentStatus {
+enum EmploymentStatus_Enum {
   ACTIVELY_LOOKING
   EMPLOYED
 }
 
-enum Gender {
+enum Gender_Enum {
   MALE
   FEMALE
 }
@@ -83,13 +91,11 @@ enum Gender {
 model Education {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  instituteId String    @db.ObjectId
-  institute   Institute @relation(fields: [instituteId], references: [id])
+  institute TInstitute
 
-  duration DatePeriod?
+  duration TDateRange
 
-  courseId String         @db.ObjectId
-  course   AcademicCourse @relation(fields: [courseId], references: [id])
+  course String
 
   backLogPending Boolean @default(false)
 
@@ -97,49 +103,60 @@ model Education {
   cgpa       String?
   percentage String?
 
-  resumeProfileId String  @db.ObjectId
-  resumeProfile   ResumeProfile @relation(fields: [resumeProfileId], references: [id])
+  profileId String  @db.ObjectId
+  profile   Profile @relation(fields: [profileId], references: [id])
+}
+
+type TDateRange {
+  start DateTime
+  end   DateTime?
+}
+
+type TInstitute {
+  name String
+  url  String?
 }
 
 model Project {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  sourceCodeLink String?
+  name           String
+  liveLink       String?
+  otherLinks     String[]
 
   skillIds String[] @db.ObjectId
   skills   Skill[]  @relation(fields: [skillIds], references: [id])
 
-  sourceCodeLink String
-  liveLink       String
-  otherLinks     String[]
-  images         String[]
-  videos         String[]
-  description    String
-  duration       DatePeriod?
-  startDate      DateTime?
-  endDate        DateTime?
+  images      String[]
+  videos      String[]
+  description String?
+  duration    TDateRange?
 
-  resumeProfileId String  @db.ObjectId
-  resumeProfile   ResumeProfile @relation(fields: [resumeProfileId], references: [id])
+  profileId String  @db.ObjectId
+  profile   Profile @relation(fields: [profileId], references: [id])
 }
 
 model Experience {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  organisationId String       @db.ObjectId
-  organisation   Organisation @relation(fields: [organisationId], references: [id])
-
-  description String
-
-  duration DatePeriod?
-  role     String
+  organisation TOrganisation
+  role         String
+  duration     TDateRange
+  description  String
 
   skillIds String[] @db.ObjectId
   skills   Skill[]  @relation(fields: [skillIds], references: [id])
 
-  resumeProfileId String  @db.ObjectId
-  resumeProfile   ResumeProfile @relation(fields: [resumeProfileId], references: [id])
+  profileId String  @db.ObjectId
+  profile   Profile @relation(fields: [profileId], references: [id])
 }
 
-enum JOINING_STATUS {
+type TOrganisation {
+  name String
+  url  String?
+}
+
+enum JOINING_STATUS_Enum {
   IMMEDIATE
   WITHIN_2_WEEKS
   FROM_2_TO_4_WEEKS
@@ -150,12 +167,13 @@ enum JOINING_STATUS {
 model Testimonial {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String
-  testimonial String
+  image       String?
+  quote       String
   socialLinks String[]
   designation String
 
-  resumeProfileeId String  @db.ObjectId
-  resumeProfilees  ResumeProfile @relation(fields: [resumeProfileeId], references: [id])
+  profileId String  @db.ObjectId
+  profiles  Profile @relation(fields: [profileId], references: [id])
 }
 
 type Address {
@@ -167,47 +185,40 @@ type Address {
   latitude  String?
 }
 
-model Recruiter {
-  id             String        @id @default(auto()) @map("_id") @db.ObjectId
-  socialLinks    String[]
-  organisationId String?       @db.ObjectId
-  organisation   Organisation? @relation(fields: [organisationId], references: [id])
-  address        Address?
-  image          String?
-  video          String?
-}
-
 model Job {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  designationId String      @db.ObjectId
-  designation   Designation @relation(fields: [designationId], references: [id])
+  designation String
 
-  mode    WORK_MODE
+  mode    WORK_MODE_Enum
   address Address?
 
-  experienceRequired ExperienceRequirement?
+  experienceRequired TExperienceRequirement
 
   fresherApplicable Boolean?
 
-  salary SalaryBracket?
+  salary            TSalaryBracket?
+  salaryNegotialble Boolean         @default(false)
 
   description String
 
+  // skills required
   skillIds String[] @db.ObjectId
   skills   Skill[]  @relation(fields: [skillIds], references: [id])
 
-  assignmentLink String?
-  vacancies      Int
+  userId String @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id])
+
+  noOfVacancies Int
 
   applications Application[]
 
-  isActive  Boolean
+ 
   createdAt DateTime @default(now())
-}
 
-model Questionnaires {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+  closedAt DateTime?
+  
+  invitations Invitation[]
 }
 
 model Application {
@@ -216,113 +227,80 @@ model Application {
   jobId String @db.ObjectId
   job   Job    @relation(fields: [jobId], references: [id])
 
+  resumeLink String?
   message    String
-  status     ApplicationStatus
-  createdAt  DateTime          @default(now())
-  acceptedAt DateTime?
+  status     ApplicationStatus_Enum @default(PENDING)
+
+  createdAt  DateTime  @default(now())
+  approvedAt DateTime?
+
+  profileId String  @db.ObjectId
+  profile   Profile @relation(fields: [profileId], references: [id])
+
+
+
+  @@unique([profileId, jobId])
 }
 
-enum ApplicationStatus {
+enum ApplicationStatus_Enum {
   PENDING
-  ACCEPTED
+  ACCEPTED_FOR_INTERVIEW
+  HIRED
   REJECTED
 }
 
-model ExperienceRequirement {
-  id  String @id @default(auto()) @map("_id") @db.ObjectId
+type TExperienceRequirement {
   min Int
   max Int
-
-  experienceId String @unique @db.ObjectId
-  experience   Job    @relation(fields: [experienceId], references: [id])
 }
 
-model DatePeriod {
-  id   String   @id @default(auto()) @map("_id") @db.ObjectId
-  from DateTime
-  to   DateTime
-
-  educationId String    @unique @db.ObjectId
-  education   Education @relation(fields: [educationId], references: [id])
-
-  projectId String  @unique @db.ObjectId
-  project   Project @relation(fields: [projectId], references: [id])
-
-  experienceId String     @unique @db.ObjectId
-  experience   Experience @relation(fields: [experienceId], references: [id])
+type TSalaryBracket {
+  min Int
+  max Int
 }
 
-model SalaryBracket {
-  id           String  @id @default(auto()) @map("_id") @db.ObjectId
-  min          Int
-  max          Int
-  currencyCode String
-  resumeProfileId    String  @unique @db.ObjectId
-  resumeProfile      ResumeProfile @relation(fields: [resumeProfileId], references: [id])
-
-  jobId String @unique @db.ObjectId
-  job   Job    @relation(fields: [jobId], references: [id])
-}
-
-model Designation {
+model Invitation {
   id   String @id @default(auto()) @map("_id") @db.ObjectId
-  name String
+   
+  profile Profile @relation(fields: [id],references: [id])
 
-  jobs Job[]
+  jobIds String[] @db.ObjectId
+  jobs Job @relation(fields: [jobIds], references: [id])
 }
 
 model Skill {
   id   String @id @default(auto()) @map("_id") @db.ObjectId
-  name String
+  name String @unique
 
-  resumeProfileIds String[]  @db.ObjectId
-  resumeProfile    ResumeProfile[] @relation(fields: [resumeProfileIds], references: [id])
+  // skills user posses
+  profileIds String[]  @db.ObjectId
+  profile    Profile[] @relation(fields: [profileIds], references: [id])
 
+  // skills requried in job
   jobIds String[] @db.ObjectId
   job    Job[]    @relation(fields: [jobIds], references: [id])
 
+  // skills used in any project
   projectIds String[]  @db.ObjectId
   project    Project[] @relation(fields: [projectIds], references: [id])
 
+  // skills worked during employment
   experienceIds String[]     @db.ObjectId
   experience    Experience[] @relation(fields: [experienceIds], references: [id])
 }
 
-model AcademicCourse {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  title String
-
-  educations Education[]
-}
-
-model Organisation {
-  id          String @id @default(auto()) @map("_id") @db.ObjectId
-  name        String @unique
-  website_url String // TODO: should it be unique
-  description String
-  image       String
-  location    String
-
-  experiences Experience[]
-  recruiters  Recruiter[]
-}
-
-model Institute {
-  id      String   @id @default(auto()) @map("_id") @db.ObjectId
-  name    String
-  image   String?
-  address Address?
-
-  educations Education[]
-}
-
-enum ROLE {
+enum ROLE_Enum {
   APPLICANT
   RECRUITER
 }
 
-enum WORK_MODE {
+enum WORK_MODE_Enum {
   WFH
   REMOTE
   HYBRID
+}
+
+enum CurrencyCode_Enum {
+  USD
+  INR
 }

@@ -1,17 +1,55 @@
 import { Router } from "express";
-
+import {
+  getProfile,
+  upsertProfileMain,
+  upsertProfileEducations,
+  upsertProfileExperiences,
+  upsertProfileProjects,
+  upsertProfileTestimonials,
+} from "../controllers/profileCtrl";
+import { validateMdlwr } from "../middleware/validateMdlwr";
+import {
+  EducationSchema,
+  ExperienceSchema,
+  ProfileSchema,
+  ProjectSchema,
+  TestimonialSchema,
+} from "@repo/utils";
+import { authMdlwr, parseCookie } from "../middleware/authMdlwr";
 const profileRtr = Router();
 
 profileRtr
-  .route("/")
-  .put(() => {})
-  .post(() => {})
-  .get(() => {});
+  .route(["/main", "/"])
+  .put(authMdlwr, validateMdlwr(ProfileSchema, "body"), upsertProfileMain)
+  .post(authMdlwr, validateMdlwr(ProfileSchema, "body"), upsertProfileMain)
+  .get(parseCookie, getProfile);
 
-profileRtr.put("/experience", () => {});
+profileRtr.post(
+  "/educations",
+  authMdlwr,
+  validateMdlwr(EducationSchema, "body"),
+  upsertProfileEducations
+);
 
-profileRtr.put("/education", () => {});
+profileRtr.post(
+  "/experiences",
+  authMdlwr,
+  validateMdlwr(ExperienceSchema, "body"),
+  upsertProfileExperiences
+);
 
-profileRtr.put("/project", () => {});
+profileRtr.post(
+  "/projects",
+  authMdlwr,
+  validateMdlwr(ProjectSchema, "body"),
+  upsertProfileProjects
+);
+
+profileRtr.post(
+  "/testimonials",
+  authMdlwr,
+  validateMdlwr(TestimonialSchema, "body"),
+  upsertProfileTestimonials
+);
 
 export { profileRtr };

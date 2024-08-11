@@ -1,9 +1,9 @@
 {
-  "name": "backend",
+  "name": "server",
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "dev": "ts-node-dev src/index",
+    "dev": "ts-node-dev --rs --transpile-only src/index",
     "build": "tsc",
     "start": "node dist/index",
     "clean-x": "rm -rf node_modules src/.next .turbo dist"
@@ -29,6 +29,8 @@
     "express": "^4.19.2",
     "express-async-errors": "^3.1.1",
     "jsonwebtoken": "^9.0.2",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "zod": "^3.23.8",
+    "zod-validation-error": "^3.3.1"
   }
 }

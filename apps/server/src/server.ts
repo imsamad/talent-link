@@ -6,7 +6,12 @@ import cookieParser from "cookie-parser";
 import { errorHandlerMdlwr } from "./middleware/errorHandlerMdlwr";
 import { CustomResponseError } from "@repo/utils";
 
-import { mainRtr } from "./routes";
+// routers
+import { authRtr } from "./routes/authRtr";
+import { profileRtr } from "./routes/profileRtr";
+import { skillRtr } from "./routes/skillRtr";
+import { jobRtr } from "./routes/jobRtr";
+import { applicationRtr } from "./lib/applicationRtr.";
 
 const app = express();
 
@@ -22,16 +27,21 @@ app
     cors({
       origin: process.env.CORS_ORIGIN,
       credentials: true,
+      methods: "*",
     })
   );
 
-app.get(["/api/v1", "/"], (req, res) => {
+app.all(["/api/v1", "/"], (req, res) => {
   res.json({
-    message: "running, honkey dorry!",
+    message: "honkey dorry!",
   });
 });
 
-app.use("/api/v1/", mainRtr);
+app.use("/api/v1/auth", authRtr);
+app.use("/api/v1/skills", skillRtr);
+app.use("/api/v1/profiles", profileRtr);
+app.use("/api/v1/jobs", jobRtr);
+app.use("/api/v1/applications", applicationRtr);
 
 app.use(() => {
   throw new CustomResponseError(400, "not found");
