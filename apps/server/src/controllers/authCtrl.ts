@@ -1,16 +1,18 @@
 import { prismaClient, User } from "@repo/db";
 import * as bcrypt from "bcryptjs";
+
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import {
   CustomError,
   CustomResponseError,
   generateOTP,
-  sendEmail,
   TCustomError,
   TCustomResponseError,
 } from "@repo/utils";
+
 import { AUTH_COOKIE_NAME } from "../lib/const";
+import { sendEmail } from "../lib/sendEmail";
 
 export const logout = async (_: Request, res: Response) => {
   res.cookie(AUTH_COOKIE_NAME, "", { maxAge: 0 });
@@ -36,15 +38,17 @@ export const login = async (req: Request, res: Response) => {
 
   if (!user) {
     throw new CustomResponseError(404, {
-      message: "user not found",
+      message: { email: "user not found" },
     });
   }
 
-  if (!(await bcrypt.compare(password, user.password)))
-    return new CustomResponseError(404, {
-      message: "invalid credentials!",
-    });
+  const isPwdValid = await bcrypt.compare(password, user.password);
 
+  if (!isPwdValid)
+    throw new CustomResponseError(404, {
+      message: { password: "invalid password!" },
+    });
+  console.log("user:", user);
   const jwtToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET as string, {
     // seconds
     expiresIn: 60 * 60 * (parseInt(process.env.JWT_EXPIRE_IN_HR!, 10) || 1),
@@ -139,7 +143,7 @@ export const confirmOTP = async (req: Request, res: Response) => {
 
   if (!token)
     throw new CustomResponseError(404, {
-      message: "Not Found!",
+      message: "OTP Not Found!",
     });
 
   const tenMinutesAgo = new Date(
@@ -161,11 +165,15 @@ export const confirmOTP = async (req: Request, res: Response) => {
     },
   });
 
-  await prismaClient.profile.create({
+  const profileCeated = await prismaClient.profile.create({
     data: {
       id: user.id,
     },
   });
+
+  console.log("profileCeated: ", profileCeated.id);
+
+  console.log("user.id: ", user.id);
 
   res.json({
     mesaage: "Authorised, enjoy!",

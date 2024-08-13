@@ -17,8 +17,7 @@
       "outputs": ["coverage/**"],
       "dependsOn": []
     },
-    "lint": {
-    },
+    "lint": {},
     "typecheck": {
       "dependsOn": ["^build"]
     },
@@ -41,12 +40,6 @@
       "cache": false
     },
     "db:seed": {
-      "cache": false
-    },
-    "studio": {
-      "cache": false
-    },
-    "clean-x": {
       "cache": false
     }
   },

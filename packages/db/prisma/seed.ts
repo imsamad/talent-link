@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { skills_seed } from "../seeder/skills";
+
 const prisma = new PrismaClient();
 
 async function main() {

@@ -56,7 +56,7 @@ model Profile {
   intro                   String?
   socialLinks             String[]
   videoResume             String?
-  resumeLinks             String[]
+  resumeLink             String?
   gender                  Gender_Enum?
   dateOfBirth             DateTime?
   currentCTC              Int?
@@ -70,7 +70,7 @@ model Profile {
   experiences   Experience[]
   projects      Project[]
   educations    Education[]
-  preferredCity String? // enum-ised cities
+  preferredLocation Address? // enum-ised cities
   skillIds      String[]      @db.ObjectId
   skills        Skill[]       @relation(fields: [skillIds], references: [id])
   testimonials  Testimonial[]
@@ -178,11 +178,11 @@ model Testimonial {
 
 type Address {
   city      String?
-  state     String
-  country   String
-  pincode   String?
-  longitude String?
-  latitude  String?
+  state     String?
+  country   String?
+  // pincode   String?
+  // longitude String?
+  // latitude  String?
 }
 
 model Job {

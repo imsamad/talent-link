@@ -1,10 +1,18 @@
-"use client";
-import { Suspense } from "react";
-import { AuthForm } from "../AuthForm";
+import LoginForm from "@/components/forms/LoginForm";
+import { authOption } from "@/lib/authOption";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 
-const LoginPage = () => (
-  <Suspense>
-    <AuthForm formType="login" />{" "}
-  </Suspense>
-);
+const LoginPage = async () => {
+  const session = await getServerSession(authOption);
+
+  if (!!!session) return redirect("/profile");
+
+  return (
+    <section className="w-full h-full flex justify-center items-center">
+      <LoginForm />
+    </section>
+  );
+};
+
 export default LoginPage;

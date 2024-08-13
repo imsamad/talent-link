@@ -4,9 +4,7 @@ import { Request, Response } from "express";
 
 export const upsertProfileMain = async (req: Request, res: Response) => {
   const userId = req.user?.id! as string;
-
-  console.log(req.body);
-
+  console.log(userId, "userId: ", req.body);
   if (req.body.dateOfBirth)
     req.body.dateOfBirth = new Date(req.body.dateOfBirth);
 
@@ -14,11 +12,9 @@ export const upsertProfileMain = async (req: Request, res: Response) => {
     where: { id: userId },
     update: {
       ...req.body,
-      userId,
     },
     create: {
       ...req.body,
-      userId,
     },
   });
 
@@ -28,6 +24,7 @@ export const upsertProfileMain = async (req: Request, res: Response) => {
 export const getProfile = async (req: Request, res: Response) => {
   let profile: any;
   // two ways to fetch data
+  console.log("req.user?.id: ", req.user?.id);
 
   if (!req.user?.id) {
     const username = req.query.username;
@@ -63,7 +60,7 @@ export const getProfile = async (req: Request, res: Response) => {
 
   if (!profile)
     throw new CustomResponseError(404, {
-      message: "not found",
+      message: "profile not found",
     });
 
   res.json({

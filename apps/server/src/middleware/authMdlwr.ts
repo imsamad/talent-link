@@ -42,13 +42,14 @@ export const parseCookie = async (
   next: NextFunction,
 ) => {
   let authToken = req.cookies[AUTH_COOKIE_NAME];
+  console.log("authToken 1:   ", authToken);
 
   authToken = authToken ? authToken : req.headers.authorization?.split(" ")[1];
-
+  console.log("authToken: ", authToken);
   if (!authToken) return next();
 
   const userJWT: any = jwt.verify(authToken, process.env.JWT_SECRET!);
-
+  console.log("userJWT: ", userJWT);
   const user = await prismaClient.user.findUnique({
     where: { id: userJWT.id, isBlocked: false },
   });

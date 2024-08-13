@@ -2,11 +2,7 @@ import { NextFunction, Request, Response } from "express";
 
 import { TCustomError, TCustomResponseError } from "@repo/utils";
 
-import {
-  PrismaClientKnownRequestError,
-  PrismaClientUnknownRequestError,
-  PrismaClientValidationError,
-} from "@repo/db";
+import { Prisma } from "@repo/db";
 
 export const errorHandlerMdlwr = (
   err: any,
@@ -21,7 +17,7 @@ export const errorHandlerMdlwr = (
     return res.status(err.statusCode).json(err.errors);
   }
 
-  if (err instanceof PrismaClientKnownRequestError) {
+  if (err instanceof Prisma.PrismaClientKnownRequestError) {
     const _err: any = err;
     console.log(err.code);
     switch (_err.code) {
@@ -57,10 +53,10 @@ export const errorHandlerMdlwr = (
     }
   }
 
-  if (err instanceof PrismaClientUnknownRequestError) {
+  if (err instanceof Prisma.PrismaClientUnknownRequestError) {
     return res.status(404).json(err.message);
   }
-  if (err instanceof PrismaClientValidationError) {
+  if (err instanceof Prisma.PrismaClientValidationError) {
     return res.status(404).json({
       message: "provide data in valid format",
     });

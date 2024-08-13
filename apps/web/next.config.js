@@ -1,13 +1,18 @@
-const { PrismaPlugin } = require("@prisma/nextjs-monorepo-workaround-plugin");
+// const { PrismaPlugin } = require("@prisma/nextjs-monorepo-workaround-plugin");
 
 module.exports = {
   reactStrictMode: false,
   webpack: (config, { isServer }) => {
     // src:https://www.prisma.io/docs/orm/more/help-and-troubleshooting/help-articles/nextjs-prisma-client-monorepo
 
-    // if (isServer) {
-    //   config.plugins = [...config.plugins, new PrismaPlugin()];
-    // }
+    if (isServer) {
+      // config.plugins = [...config.plugins, new PrismaPlugin()];
+    }
+    // config.resolve.fallback = { ...config.resolve.fallback, fs: false };
+    // config.node = {
+    //   fs: "empty",
+    // };
     return config;
   },
+  // transpilePackages: ["@repo/utils"]
 };

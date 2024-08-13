@@ -3,11 +3,13 @@ import {
   EmploymentStatus_Enum,
   Gender_Enum,
   JOINING_STATUS_Enum,
+  Prisma,
   WORK_MODE_Enum,
 } from "@repo/db";
 import { z } from "zod";
 
 // Enum definitions
+
 export const GenderEnum = z.nativeEnum(Gender_Enum);
 export const EmploymentStatusEnum = z.nativeEnum(EmploymentStatus_Enum);
 export const JoiningStatusEnum = z.nativeEnum(JOINING_STATUS_Enum);
@@ -15,13 +17,13 @@ export const WorkModeEnum = z.nativeEnum(WORK_MODE_Enum);
 export const ApplicationStatusEnum = z.nativeEnum(ApplicationStatus_Enum);
 
 export const AddressSchema = z.object({
-  city: z.string().optional(),
-  state: z.string(),
-  country: z.string(),
-  pincode: z.string().optional(),
-  longitude: z.string().optional(),
-  latitude: z.string().optional(),
-});
+  city: z.string().nullable(),
+  state: z.string().nullable(),
+  country: z.string().nullable(),
+  // pincode: z.string().optional().nullable(),
+  // longitude: z.string().optional().nullable(),
+  // latitude: z.string().optional().nullable(),
+}) satisfies z.Schema<Prisma.AddressCreateInput>;
 
 export const DateRangeSchema = z.object({
   start: z.coerce.date(),
@@ -44,8 +46,8 @@ export const ExperienceRequirementSchema = z.object({
 });
 
 export const SalaryBracketSchema = z.object({
-  min: z.number(),
-  max: z.number(),
+  min: z.coerce.number(),
+  max: z.coerce.number(),
 });
 
 export const LoginSchema = z.object({
@@ -55,11 +57,43 @@ export const LoginSchema = z.object({
       invalid_type_error: "invalid data type",
     })
     .email(),
-  password: z.string({
-    required_error: "email is required",
+  password: z
+    .string({
+      required_error: "Password is required",
+      invalid_type_error: "invalid data type",
+    })
+    .min(1, { message: "Password is required" }),
+});
+
+export const SignUpSchema = LoginSchema.pick({ email: true }).merge(
+  z.object({
+    password: z
+      .string({
+        required_error: "email is required",
+        invalid_type_error: "invalid data type",
+      })
+      .min(8, { message: "Password must be at least 8 characters long" })
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+        {
+          message:
+            "Password must include an uppercase letter, a lowercase letter, a digit, and a special character",
+        },
+      ),
+  }),
+);
+
+export type TLoginSchema = z.infer<typeof LoginSchema>;
+export type TSignupSchema = z.infer<typeof SignUpSchema>;
+
+export const OTPSchema = z.object({
+  otp: z.string({
+    required_error: "otp is required",
     invalid_type_error: "invalid data type",
   }),
 });
+
+export type TOtpSchema = z.infer<typeof OTPSchema>;
 
 const objectIdRegex = /^[0-9a-fA-F]{24}$/;
 
@@ -71,24 +105,27 @@ export const ObjectIdSchema = z
 
 export const ProfileSchema = z
   .object({
-    intro: z.string().optional(),
+    intro: z.string().optional().nullable(),
     socialLinks: z.array(z.string().url()).optional(),
-    videoResume: z.string().url().optional(),
-    resumeLinks: z.array(z.string().url()).optional(),
-    gender: GenderEnum.optional(),
-    dateOfBirth: z.coerce.date().optional(),
-    currentCTC: z.number().optional(),
-    expectedCTC: SalaryBracketSchema.nullable().optional(),
-    currentEmploymentStatus: EmploymentStatusEnum.optional(),
-    joiningStatus: JoiningStatusEnum.optional(),
-    workMode: WorkModeEnum.optional(),
-    address: AddressSchema.optional(),
-    preferredCity: z.string().optional(),
+    videoResume: z.string().url().optional().nullable(),
+    resumeLink: z.string().url().optional().nullable(),
+    gender: GenderEnum.optional().nullable(),
+    currentCTC: z.coerce.number().optional().nullable(),
+    expectedCTC: SalaryBracketSchema.nullable().optional().nullable(),
+    address: AddressSchema.optional().nullable(),
+    preferredLocation: AddressSchema.optional().nullable(),
+    currentEmploymentStatus: EmploymentStatusEnum.optional().nullable(),
+    joiningStatus: JoiningStatusEnum.optional().nullable(),
+    workMode: WorkModeEnum.optional().nullable(),
+    dateOfBirth: z.coerce.date().optional().nullable(),
+
     skillIds: z.array(ObjectIdSchema).optional(),
   })
   .strict({
     message: "provide only relevent data",
-  });
+  }) satisfies z.Schema<Prisma.ProfileUncheckedCreateInput>;
+
+export type TProfileSchema = z.infer<typeof ProfileSchema>;
 
 export const EducationSchema = z.object(
   {
@@ -165,6 +202,7 @@ export const ProjectSchema = z.object(
     invalid_type_error: "Provide array of projects object",
   },
 );
+export type TProjectSchema = z.infer<typeof ProjectSchema>;
 
 export const TestimonialSchema = z.object(
   {

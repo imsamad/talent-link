@@ -14,14 +14,18 @@
     "lint": "turbo run lint",
     "test": "turbo run test",
     "typecheck": "turbo run typecheck",
-    "db:generate": "turbo run db:generate",
+    "db:generate": "prisma generate",
     "db:push": "turbo run db:push",
     "db:seed": "turbo run db:seed",
-    "studio": "turbo run studio",
+    "studio": "prisma studio --schema=./packages/db/prisma/schema.prisma",
     "env:copy": "echo 'Copying .env files if they do not already exist...\n' && bash -c '[ ! -f apps/web/.env ] && { echo \"Copying apps/web/.env\"; cp apps/web/.env.example apps/web/.env; } ; [ ! -f apps/server/.env ] && { echo \"Copying apps/server/.env\"; cp apps/server/.env.example apps/server/.env; } ; [ ! -f packages/db/.env ] && { echo \"Copying packages/db/.env\"; cp packages/db/.env.example packages/db/.env; }'",
-    "setup": "docker compose up -d && pnpm env:copy && pnpm i && pnpm db:generate && pnpm dev",
+    "setup": "docker compose up -d && pnpm env:copy && pnpm i && pnpm db:generate && pnpm turbo run build -F=@repo/* && pnpm dev",
     "prepare": "husky install",
-    "clean-x": "rm -rf node_modules .turbo apps/web/.next apps/web/.turbo apps/web/node_modules apps/server/dist apps/server/.turbo apps/server/node_modules packages/utils/dist packages/utils/.turbo packages/utils/node_modules packages/db/dist packages/db/.turbo packages/db/node_modules"
+    "clean-x": "rm -rf node_modules .turbo apps/web/.next apps/web/.turbo apps/web/node_modules apps/web2/.next apps/web2/.turbo apps/web2/node_modules apps/server/dist apps/server/.turbo apps/server/node_modules packages/utils/dist packages/utils/.turbo packages/utils/node_modules packages/db/dist packages/db/.turbo packages/db/node_modules"
+  },
+  "prisma": {
+    "schema": "./packages/db/prisma/schema.prisma",
+    "seed": "./packages/db/prisma/seed.ts"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
@@ -31,9 +35,11 @@
     "globals": "^15.9.0",
     "husky": "^9.1.4",
     "prettier": "^3.2.5",
+    "prisma": "^5.17.0",
     "turbo": "^2.0.11"
   },
   "dependencies": {
+    "@prisma/client": "5.18.0",
     "bcryptjs": "^2.4.3"
   },
   "engines": {

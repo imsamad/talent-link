@@ -7,7 +7,6 @@
     "build": "tsc",
     "start": "node dist/index",
     "clean": "rm -rf dist",
-    "clean-x": "rm -rf node_modules .turbo dist",
     "lint": "eslint src/",
     "typecheck": "tsc --noEmit"
   },
@@ -23,7 +22,8 @@
     "@types/jsonwebtoken": "^9.0.6",
     "@types/morgan": "^1.9.9",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.5.4"
+    "typescript": "^5.5.4",
+    "@types/nodemailer": "^6.4.15"
   },
   "dependencies": {
     "@repo/db": "workspace:*",
@@ -36,6 +36,7 @@
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "zod": "^3.23.8",
-    "zod-validation-error": "^3.3.1"
+    "zod-validation-error": "^3.3.1",
+    "nodemailer": "^6.9.14"
   }
 }

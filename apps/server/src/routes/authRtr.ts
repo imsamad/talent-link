@@ -9,11 +9,11 @@ import {
 } from "../controllers/authCtrl";
 import { authMdlwr } from "../middleware/authMdlwr";
 import { validateMdlwr } from "../middleware/validateMdlwr";
-import { LoginSchema } from "@repo/utils";
+import { LoginSchema, SignUpSchema } from "@repo/utils";
 
 const authRtr = Router();
 
-authRtr.post("/signup", validateMdlwr(LoginSchema, "body"), signUp);
+authRtr.post("/signup", validateMdlwr(SignUpSchema, "body"), signUp);
 authRtr.post("/login", validateMdlwr(LoginSchema, "body"), login);
 authRtr.post("/logout", logout);
 authRtr.post("/confirmOTP/:token", confirmOTP);

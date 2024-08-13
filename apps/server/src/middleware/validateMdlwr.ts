@@ -2,7 +2,6 @@ import { ZodSchema } from "zod";
 import { Request, Response, NextFunction } from "express";
 import { CustomResponseError } from "@repo/utils";
 
-
 export const validateMdlwr = (
   schema: ZodSchema,
   at: "body" | "query" | "params",
