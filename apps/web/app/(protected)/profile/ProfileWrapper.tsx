@@ -94,7 +94,7 @@ export const useRefetchProfile = () => {
   const context = useContext(RefetchCtx);
   if (context === undefined) {
     throw new Error(
-      "useRefetchProfile must be used within a RefetchCtx.Provider"
+      "useRefetchProfile must be used within a RefetchCtx.Provider",
     );
   }
   return context;

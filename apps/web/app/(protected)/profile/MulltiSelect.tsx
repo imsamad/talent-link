@@ -87,7 +87,7 @@ export function MultipleSelector<T>({
                         "mr-2 h-4 w-4",
                         selectedItems.some((id) => item[idKey] === id)
                           ? "opacity-100"
-                          : "opacity-0"
+                          : "opacity-0",
                       )}
                     />
                     {item[labelKey]! as string}

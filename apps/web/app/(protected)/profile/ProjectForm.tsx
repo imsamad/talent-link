@@ -124,7 +124,7 @@ export const ProjectForm = ({
             const selectedItems = projectForm.getValues().skillIds || [];
 
             const isSelected = selectedItems.some(
-              (id: string) => id === selectedId
+              (id: string) => id === selectedId,
             );
 
             if (isSelected) {
@@ -135,7 +135,7 @@ export const ProjectForm = ({
                   shouldValidate: true,
                   shouldDirty: true,
                   shouldTouch: true,
-                }
+                },
               );
             } else {
               const updatedSkillIds = [...selectedItems, selectedId];

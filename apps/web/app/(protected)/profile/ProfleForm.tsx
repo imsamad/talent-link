@@ -99,7 +99,7 @@ export const ProfileForm = ({
             const selectedItems = profileForm.getValues().skillIds || [];
 
             const isSelected = selectedItems.some(
-              (id: string) => id === selectedId
+              (id: string) => id === selectedId,
             );
 
             if (isSelected) {
@@ -110,7 +110,7 @@ export const ProfileForm = ({
                   shouldValidate: true,
                   shouldDirty: true,
                   shouldTouch: true,
-                }
+                },
               );
             } else {
               const updatedSkillIds = [...selectedItems, selectedId];

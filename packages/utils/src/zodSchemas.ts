@@ -78,9 +78,9 @@ export const SignUpSchema = LoginSchema.pick({ email: true }).merge(
         {
           message:
             "Password must include an uppercase letter, a lowercase letter, a digit, and a special character",
-        }
+        },
       ),
-  })
+  }),
 );
 
 export type TLoginSchema = z.infer<typeof LoginSchema>;
@@ -145,12 +145,12 @@ export const EducationSchema = z.object(
         }),
       {
         invalid_type_error: "Provide array of education object",
-      }
+      },
     ),
   },
   {
     invalid_type_error: "Provide array of education object",
-  }
+  },
 );
 
 export const ExperienceSchema = z

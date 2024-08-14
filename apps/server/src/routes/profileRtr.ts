@@ -33,7 +33,7 @@ profileRtr.post(
   "/projects",
   authMdlwr,
   validateMdlwr(ProjectSchema, "body"),
-  createProfileProject
+  createProfileProject,
 );
 
 profileRtr
@@ -42,14 +42,14 @@ profileRtr
   .delete(
     authMdlwr,
     validateMdlwr(ObjectIDOnParam("projectId"), "params"),
-    deleteProfileProject
+    deleteProfileProject,
   );
 
 profileRtr.post(
   "/experiences",
   authMdlwr,
   validateMdlwr(ExperienceSchema, "body"),
-  createProfileExperience
+  createProfileExperience,
 );
 
 profileRtr
@@ -57,19 +57,19 @@ profileRtr
   .put(
     authMdlwr,
     validateMdlwr(ExperienceSchema, "body"),
-    updateProfileExperience
+    updateProfileExperience,
   )
   .delete(
     authMdlwr,
     validateMdlwr(ObjectIDOnParam("experienceId"), "params"),
-    deleteProfileExperience
+    deleteProfileExperience,
   );
 
 profileRtr.post(
   "/testimonials",
   authMdlwr,
   validateMdlwr(TestimonialSchema, "body"),
-  createProfileTestimonial
+  createProfileTestimonial,
 );
 
 profileRtr
@@ -77,11 +77,11 @@ profileRtr
   .put(
     authMdlwr,
     validateMdlwr(TestimonialSchema, "body"),
-    updateProfileTestimonial
+    updateProfileTestimonial,
   )
   .delete(
     authMdlwr,
     validateMdlwr(ObjectIDOnParam("testimonialId"), "params"),
-    deleteProfileTestimonial
+    deleteProfileTestimonial,
   );
 export { profileRtr };

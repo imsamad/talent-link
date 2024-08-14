@@ -84,7 +84,7 @@ export const upsertProfileEducations = async (req: Request, res: Response) => {
       }
       return acc;
     },
-    { newExperiences: [], prevExperiences: [] }
+    { newExperiences: [], prevExperiences: [] },
   );
 
   if (newExperiences.length > 0) {
@@ -102,8 +102,8 @@ export const upsertProfileEducations = async (req: Request, res: Response) => {
         prismaClient.education.update({
           where: { id },
           data: rest,
-        })
-      )
+        }),
+      ),
     );
   }
 
