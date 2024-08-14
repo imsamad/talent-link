@@ -27,8 +27,8 @@ app
     cors({
       origin: process.env.CORS_ORIGIN,
       credentials: true,
-      methods: "*",
-    }),
+      methods: ["GET", "POST", "PUT", "DELETE"],
+    })
   );
 
 app.all(["/api/v1", "/"], (req, res) => {

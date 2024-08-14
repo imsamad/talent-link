@@ -1,32 +1,45 @@
 "use client";
-import { DatePicker, MyInput, MyRadioGroup } from "@/components/MyForm";
-import { Button } from "@/components/ui/button";
-import { Form, FormLabel } from "@/components/ui/form";
-import { generateEnumLabelList } from "@/lib/generateEnumLabelList";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  EmploymentStatus_Enum,
-  Gender_Enum,
-  JOINING_STATUS_Enum,
-  Skill,
-  WORK_MODE_Enum,
-} from "@repo/db";
 import { ProfileSchema, TProfileSchema } from "@repo/utils";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 
+import { MyInput, MyRadioGroup, DatePicker } from "@/components/MyForm";
+import { Form, FormControl, FormLabel } from "@/components/ui/form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
+import { generateEnumLabelList } from "@/lib/generateEnumLabelList";
+import {
+  Gender_Enum,
+  EmploymentStatus_Enum,
+  JOINING_STATUS_Enum,
+  WORK_MODE_Enum,
+  Skill,
+} from "@repo/db";
+
+import { MultipleSelector } from "./MulltiSelect";
 import { useToast } from "@/components/ui/use-toast";
 import { fetcher } from "@/lib/fetcher";
-import { MultipleSelector } from "./MulltiSelect";
+import {
+  ArrowBigDownDash,
+  DeleteIcon,
+  PlusIcon,
+  RemoveFormatting,
+  Trash,
+} from "lucide-react";
 
 export const ProfileForm = ({
   skills,
   profile,
 }: {
   skills: Pick<Skill, "id" | "name">[];
-  profile: Partial<TProfileSchema>;
+  profile: TProfileSchema;
 }) => {
   // @ts-ignore
   const { id: _id, ...rest } = profile;
+
+  // Ensure socialLinks always has at least one entry
+  if (!rest.socialLinks || rest.socialLinks.length === 0) {
+    rest.socialLinks = [""];
+  }
 
   const profileForm = useForm<TProfileSchema>({
     resolver: zodResolver(ProfileSchema),
@@ -47,8 +60,15 @@ export const ProfileForm = ({
     values: rest,
   });
 
+  const otherLinksFields = useFieldArray({
+    control: profileForm.control,
+    name: "socialLinks",
+  });
+
   const { toast } = useToast();
   const handleSubmit = async (profile: TProfileSchema) => {
+    console.log("profile:", profile);
+    return;
     try {
       await fetcher("/profiles/main", "post", profile);
       toast({
@@ -70,6 +90,71 @@ export const ProfileForm = ({
         className="w-full max-w-2xl mx-auto px-4 pb-10"
         onSubmit={profileForm.handleSubmit(handleSubmit)}
       >
+        {/* <div className="flex gap-x-2">
+          <MyInput
+            control={profileForm.control}
+            name={`socialLinks.0`}
+            type="text"
+          />
+
+          <Button
+            size="icon"
+            variant="outline"
+            onClick={async (e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              await profileForm.trigger("socialLinks");
+              console.log(profileForm.getFieldState("socialLinks"));
+
+              return;
+              if (otherLinksFields.fields.length) otherLinksFields.remove(0);
+              else otherLinksFields.append("");
+            }}
+          >
+            {otherLinksFields.fields.length > 1 ? <Trash /> : <PlusIcon />}
+          </Button>
+        </div> */}
+        {otherLinksFields.fields.length &&
+          otherLinksFields.fields.slice(1).map((field, index) => (
+            <div key={field.id} className="flex gap-x-2">
+              <MyInput
+                control={profileForm.control}
+                name={`socialLinks.${index + 1}`}
+                type="text"
+              />
+
+              <Button
+                size="icon"
+                variant="outline"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+
+                  otherLinksFields.remove(index + 1);
+                }}
+              >
+                <Trash />
+              </Button>
+
+              <Button
+                size="icon"
+                variant="outline"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  if (otherLinksFields.fields.length - 1 === index)
+                    otherLinksFields.append("");
+                  else otherLinksFields.remove(index);
+                }}
+              >
+                {otherLinksFields.fields.length - 1 === index ? (
+                  <PlusIcon />
+                ) : (
+                  <Trash />
+                )}
+              </Button>
+            </div>
+          ))}
         <MyInput
           control={profileForm.control}
           name="intro"
@@ -88,7 +173,8 @@ export const ProfileForm = ({
         </div>
         <FormLabel>Skills</FormLabel>
         <MultipleSelector
-          error={profileForm.formState.errors.skillIds?.message}
+                  error={profileForm.formState.errors.skillIds?.message}
+
           data={skills}
           itemShape={{
             idKey: "id",

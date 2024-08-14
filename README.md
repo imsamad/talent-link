@@ -1,5 +1,15 @@
 ### setup
 
+```
+Magic setting
+{
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": true
+  }
+}
+
+```
+
 #### features
 
 - user would register with email/phone/cohortId and have to confirm with otp

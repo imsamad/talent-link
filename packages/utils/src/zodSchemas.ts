@@ -78,9 +78,9 @@ export const SignUpSchema = LoginSchema.pick({ email: true }).merge(
         {
           message:
             "Password must include an uppercase letter, a lowercase letter, a digit, and a special character",
-        },
+        }
       ),
-  }),
+  })
 );
 
 export type TLoginSchema = z.infer<typeof LoginSchema>;
@@ -145,87 +145,58 @@ export const EducationSchema = z.object(
         }),
       {
         invalid_type_error: "Provide array of education object",
-      },
+      }
     ),
   },
   {
     invalid_type_error: "Provide array of education object",
-  },
+  }
 );
 
-export const ExperienceSchema = z.object(
-  {
-    experiences: z.array(
-      z
-        .object({
-          id: z.string().length(24).optional(),
-          organisation: OrganisationSchema,
-          role: z.string(),
-          duration: DateRangeSchema,
-          description: z.string().optional(),
-          skillIds: z.array(z.string().length(24)),
-        })
-        .strict(),
-      {
-        invalid_type_error: "Provide array of experience object",
-      },
-    ),
-  },
-  {
-    invalid_type_error: "Provide array of experience object",
-  },
-);
+export const ExperienceSchema = z
+  .object({
+    organisation: OrganisationSchema,
+    role: z.string(),
+    duration: DateRangeSchema.optional().nullable(),
+    description: z.string(),
+    skillIds: z.array(z.string().length(24)),
+    profileId: ObjectIdSchema,
+  })
+  .strict() satisfies z.Schema<Prisma.ExperienceUncheckedCreateInput>;
 
-export const ProjectSchema = z.object(
-  {
-    projects: z.array(
-      z
-        .object({
-          id: z.string().length(24).optional(),
-          name: z.string(),
-          sourceCodeLink: z.string().url().optional(),
-          liveLink: z.string().url().optional(),
-          otherLinks: z.array(z.string().url()).optional(),
-          skillIds: z.array(ObjectIdSchema),
-          images: z.array(z.string().url()).optional(),
-          videos: z.array(z.string().url()).optional(),
-          description: z.string().optional(),
-          duration: DateRangeSchema.optional(),
-        })
-        .strict(),
-      {
-        invalid_type_error: "Provide array of projects object",
-      },
-    ),
-  },
-  {
-    invalid_type_error: "Provide array of projects object",
-  },
-);
+export type TExperienceSchema = z.infer<typeof ExperienceSchema>;
+
+export const ProjectSchema = z
+  .object({
+    id: z.string().length(24).optional(),
+    name: z.string(),
+    sourceCodeLink: z.string().url().optional().nullable(),
+    liveLink: z.string().url().optional().nullable(),
+    otherLinks: z.array(z.string().url()).optional(),
+    skillIds: z.array(ObjectIdSchema),
+    images: z.array(z.string().url()).optional(),
+    videos: z.array(z.string().url()).optional(),
+    description: z.string().optional().nullable(),
+    duration: DateRangeSchema.optional().nullable(),
+    profileId: ObjectIdSchema,
+  })
+  .strict() satisfies z.Schema<Prisma.ProjectUncheckedCreateInput>;
+
 export type TProjectSchema = z.infer<typeof ProjectSchema>;
 
-export const TestimonialSchema = z.object(
-  {
-    testimonials: z.array(
-      z
-        .object({
-          id: ObjectIdSchema.optional(),
-          name: z.string(),
-          image: z.string().url().optional(),
-          quote: z.string(),
-          socialLinks: z.array(z.string().url()).optional(),
-          designation: z.string(),
-        })
-        .strict(),
-      {
-        invalid_type_error: "Provide array of projects object",
-      },
-    ),
-  },
-  {
-    invalid_type_error: "Provide array of testimonials object",
-  },
-);
+export const TestimonialSchema = z
+  .object({
+    id: ObjectIdSchema.optional(),
+    name: z.string(),
+    image: z.string().url().optional().nullable(),
+    quote: z.string(),
+    socialLinks: z.array(z.string().url()).optional(),
+    designation: z.string(),
+    profileId: ObjectIdSchema,
+  })
+  .strict() satisfies z.Schema<Prisma.TestimonialUncheckedCreateInput>;
+
+export type TTestimonialSchema = z.infer<typeof TestimonialSchema>;
 
 const TExperienceRequirementSchema = z.object({
   min: z.number().int(),

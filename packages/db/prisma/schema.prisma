@@ -73,7 +73,9 @@ model Profile {
   preferredLocation Address? // enum-ised cities
   skillIds      String[]      @db.ObjectId
   skills        Skill[]       @relation(fields: [skillIds], references: [id])
+  
   testimonials  Testimonial[]
+
   invitaion Invitation[]
   applications Application[]
 }
@@ -141,7 +143,7 @@ model Experience {
 
   organisation TOrganisation
   role         String
-  duration     TDateRange
+  duration     TDateRange?
   description  String
 
   skillIds String[] @db.ObjectId

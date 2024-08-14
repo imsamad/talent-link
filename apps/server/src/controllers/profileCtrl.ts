@@ -38,6 +38,8 @@ export const getProfile = async (req: Request, res: Response) => {
               experiences: true,
               educations: true,
               invitaion: true,
+              projects: true,
+              testimonials: true,
             },
           },
         },
@@ -49,11 +51,13 @@ export const getProfile = async (req: Request, res: Response) => {
       where: {
         id: req.user?.id! as string,
       },
-      select: {
+      include: {
         skills: true,
         experiences: true,
         educations: true,
         invitaion: true,
+        projects: true,
+        testimonials: true,
       },
     });
   }
@@ -80,7 +84,7 @@ export const upsertProfileEducations = async (req: Request, res: Response) => {
       }
       return acc;
     },
-    { newExperiences: [], prevExperiences: [] },
+    { newExperiences: [], prevExperiences: [] }
   );
 
   if (newExperiences.length > 0) {
@@ -98,8 +102,8 @@ export const upsertProfileEducations = async (req: Request, res: Response) => {
         prismaClient.education.update({
           where: { id },
           data: rest,
-        }),
-      ),
+        })
+      )
     );
   }
 
@@ -113,140 +117,122 @@ export const upsertProfileEducations = async (req: Request, res: Response) => {
   });
 };
 
-export const upsertProfileExperiences = async (req: Request, res: Response) => {
+export const createProfileProject = async (req: Request, res: Response) => {
   const userId = req.user?.id! as string;
 
-  const { newExperiences, prevExperiences } = req.body.experiences.reduce(
-    (acc: any, { id, ...rest }: any) => {
-      if (!id) {
-        acc.newExperiences.push({ ...rest });
-      } else {
-        acc.prevExperiences.push({ id, ...rest });
-      }
-      return acc;
-    },
-    { newExperiences: [], prevExperiences: [] },
-  );
-
-  if (newExperiences.length > 0) {
-    await prismaClient.experience.createMany({
-      data: newExperiences.map((experience: any) => ({
-        ...experience,
-        profileId: userId,
-      })),
-    });
-  }
-
-  if (prevExperiences.length > 0) {
-    await Promise.all(
-      prevExperiences.map(({ id, ...rest }: any) =>
-        prismaClient.experience.update({
-          where: { id },
-          data: rest,
-        }),
-      ),
-    );
-  }
+  const { id, ...rest } = req.body;
 
   res.json({
-    profile: await prismaClient.profile.findUnique({
-      where: { id: userId },
-      include: {
-        experiences: true,
+    project: await prismaClient.project.create({
+      data: {
+        ...rest,
+        profileId: userId,
       },
     }),
   });
 };
 
-export const upsertProfileProjects = async (req: Request, res: Response) => {
+export const updateProfileProject = async (req: Request, res: Response) => {
   const userId = req.user?.id! as string;
-
-  const { newProjects, prevProjects } = req.body.projects.reduce(
-    (acc: any, { id, ...rest }: any) => {
-      if (!id) {
-        acc.newProjects.push({ ...rest });
-      } else {
-        acc.prevProjects.push({ id, ...rest });
-      }
-      return acc;
-    },
-    { newProjects: [], prevProjects: [] },
-  );
-
-  if (newProjects.length > 0) {
-    await prismaClient.project.createMany({
-      data: newProjects.map((project: any) => ({
-        ...project,
-        profileId: userId,
-      })),
-    });
-  }
-
-  if (prevProjects.length > 0) {
-    await Promise.all(
-      prevProjects.map(({ id, ...rest }: any) =>
-        prismaClient.project.update({
-          where: { id },
-          data: rest,
-        }),
-      ),
-    );
-  }
+  console.log("req.body: ", req.body);
+  const { id, profileId, ...rest } = req.body;
 
   res.json({
-    profile: await prismaClient.profile.findUnique({
-      where: { id: userId },
-      include: {
-        projects: true,
+    project: await prismaClient.project.update({
+      where: { id: req.params.projectId },
+      data: {
+        ...rest,
       },
     }),
   });
 };
 
-export const upsertProfileTestimonials = async (
-  req: Request,
-  res: Response,
-) => {
+export const deleteProfileProject = async (req: Request, res: Response) => {
+  const userId = req.user?.id! as string;
+  await prismaClient.project.delete({
+    where: { id: req.params.projectId, profileId: userId },
+  });
+  res.json({
+    message: "Deleted",
+  });
+};
+
+export const createProfileTestimonial = async (req: Request, res: Response) => {
   const userId = req.user?.id! as string;
 
-  const { newTestimonials, prevTestimonials } = req.body.testimonials.reduce(
-    (acc: any, { id, ...rest }: any) => {
-      if (!id) {
-        acc.newTestimonials.push({ ...rest });
-      } else {
-        acc.prevTestimonials.push({ id, ...rest });
-      }
-      return acc;
-    },
-    { newTestimonials: [], prevTestimonials: [] },
-  );
-
-  if (newTestimonials.length > 0) {
-    await prismaClient.testimonial.createMany({
-      data: newTestimonials.map((testimonial: any) => ({
-        ...testimonial,
-        profileId: userId,
-      })),
-    });
-  }
-
-  if (prevTestimonials.length > 0) {
-    await Promise.all(
-      prevTestimonials.map(({ id, ...rest }: any) =>
-        prismaClient.testimonial.update({
-          where: { id },
-          data: rest,
-        }),
-      ),
-    );
-  }
+  const { id, ...rest } = req.body;
 
   res.json({
-    profile: await prismaClient.profile.findUnique({
-      where: { id: userId },
-      include: {
-        testimonials: true,
+    testimonial: await prismaClient.testimonial.create({
+      data: {
+        ...rest,
+        profileId: userId,
       },
     }),
   });
+};
+
+export const updateProfileTestimonial = async (req: Request, res: Response) => {
+  const userId = req.user?.id! as string;
+
+  const { id, profileId, ...rest } = req.body;
+
+  res.json({
+    testimonial: await prismaClient.testimonial.update({
+      where: { id: req.params.testimonialId },
+      data: rest,
+    }),
+  });
+};
+export const deleteProfileTestimonial = async (req: Request, res: Response) => {
+  const userId = req.user?.id! as string;
+
+  await prismaClient.testimonial.delete({
+    where: { id: req.params.testimonialId, profileId: userId },
+  });
+
+  res.json({
+    testimonial: "Deleted",
+  });
+};
+
+export const createProfileExperience = async (req: Request, res: Response) => {
+  const userId = req.user?.id! as string;
+
+  const { id, ...rest } = req.body;
+
+  res.json({
+    experience: await prismaClient.experience.create({
+      data: {
+        ...rest,
+        profileId: userId,
+      },
+    }),
+  });
+};
+
+export const updateProfileExperience = async (req: Request, res: Response) => {
+  const userId = req.user?.id! as string;
+
+  const { id, profileId, ...rest } = req.body;
+
+  res.json({
+    experience: await prismaClient.experience.update({
+      where: { id: req.params.experienceId },
+      data: {
+        ...rest,
+      },
+    }),
+  });
+};
+
+export const deleteProfileExperience = async (req: Request, res: Response) => {
+  const userId = req.user?.id! as string;
+
+  await prismaClient.experience.delete({
+    where: { id: req.params.experienceId, profileId: userId },
+  }),
+    res.json({
+      message: "Deleted",
+    });
 };

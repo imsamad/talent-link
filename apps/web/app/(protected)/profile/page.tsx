@@ -1,10 +1,9 @@
-import { fetcher } from "@/lib/fetcher";
-import React from "react";
-import { ProfileForm } from "./ProfleForm";
+import { authOption } from "@/lib/authOption";
+import { prismaClient } from "@repo/db";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { prismaClient } from "@repo/db";
-import { authOption } from "@/lib/authOption";
+
+import { ProfileWrapper } from "./ProfileWrapper";
 
 const ProfilePage = async () => {
   const session = await getServerSession(authOption);
@@ -22,10 +21,16 @@ const ProfilePage = async () => {
   const profile = await prismaClient.profile.findFirst({
     // @ts-ignore
     where: { id: session.id! as string },
+    include: {
+      projects: true,
+      experiences: true,
+      testimonials: true,
+    },
   });
 
-  console.log("profile:", profile);
-  return <ProfileForm skills={skills} profile={profile!} />;
+  if (!profile) return redirect("/login?redirectTo=/profile");
+
+  return <ProfileWrapper skills={skills} profile={profile} />;
 };
 
 export default ProfilePage;

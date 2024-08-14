@@ -27,6 +27,7 @@ interface MultipleSelectorProps<T> {
   };
   handleSetValue: (id: string) => void;
   selectedItems: string[];
+  error: string | undefined;
 }
 
 export function MultipleSelector<T>({
@@ -34,13 +35,13 @@ export function MultipleSelector<T>({
   itemShape,
   handleSetValue,
   selectedItems,
+  error,
 }: MultipleSelectorProps<T>) {
   const [open, setOpen] = React.useState(false);
   //   const [value, setValue] = React.useState<T[]>([]);
 
   const idKey = itemShape.idKey;
   const labelKey = itemShape.labelKey;
-  console.log("selectedItems from inside compoe: ", selectedItems);
 
   return (
     <div className="">
@@ -50,7 +51,7 @@ export function MultipleSelector<T>({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-[480px] h-full w-full justify-between"
+            className="w-[480px] h-full justify-between"
           >
             <div className="flex gap-2 justify-start flex-wrap ">
               {selectedItems.length > 0
@@ -86,7 +87,7 @@ export function MultipleSelector<T>({
                         "mr-2 h-4 w-4",
                         selectedItems.some((id) => item[idKey] === id)
                           ? "opacity-100"
-                          : "opacity-0",
+                          : "opacity-0"
                       )}
                     />
                     {item[labelKey]! as string}
@@ -97,6 +98,11 @@ export function MultipleSelector<T>({
           </Command>
         </PopoverContent>
       </Popover>
+      {error && (
+        <p className="text-sm font-medium text-red-500 dark:text-red-830">
+          {error}
+        </p>
+      )}
     </div>
   );
 }
